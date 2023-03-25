@@ -22,21 +22,124 @@ CONFIG XINST = OFF      ; Extended Instruction Set Enable bit (Instruction set e
 
 ; GLOBAL SYMBOLS
 ; You need to add your variables here if you want to debug them.
-GLOBAL var1
+GLOBAL duration, duration2, duration3, last_portb, pause, temp, increment
 
 ; Define space for the variables in RAM
 PSECT udata_acs
-var1:
+duration:
     DS 1 
+duration2:
+    DS 1
+duration3:
+    DS 1
+last_portb:
+    DS 1
+pause:
+    DS 1
+temp:
+    DS 1
+increment:
+    DS 1
 
 PSECT resetVec,class=CODE,reloc=2
 resetVec:
     goto       main
 
 PSECT CODE
-main:
-  clrf var1 ; var1 = 0
+main:    
+    clrf TRISA ; make PORTA an output
+    clrf duration
+    clrf duration2
+    clrf duration3
+    clrf last_portb
+    clrf pause
+    clrf temp
+    movlw 100
+    movwf duration
+    movlw 00000111B ; light up RA1, RA2, RA3
+    movwf LATA
+    call wait1000ms
+    clrf LATA
+    setf PORTB
+
+    
 main_loop:
+  call check_buttons
+  movf pause
+  bnz paused
+  call metronome
+paused:
   goto main_loop
+
+check_buttons:
+    comf PORTB, 0
+    andwf last_portb, 0
+    movwf temp
+    btfsc temp, 0
+    call rb0_pressed
+    btfsc temp, 1
+    call rb1_pressed
+    btfsc temp, 2
+    call rb2_pressed
+    btfsc temp, 3
+    call rb3_pressed
+    btfsc temp, 4
+    call rb4_pressed
+    movff PORTB, last_portb
+    return
+  
+    
+rb0_pressed:
+    comf pause
+    return
+    
+rb1_pressed:
+rb2_pressed:
+rb3_pressed:
+rb4_pressed:
+
+metronome:
+    
+    incfsz duration
+    return
+    movlw 197
+    movwf duration
+    call overflow
+    return
+    
+overflow:
+    incfsz duration2
+    return
+    call overflow2
+    return
+
+overflow2:
+    comf LATA  ; 500.486 ms
+    return
+
+  
+wait1000ms: ; 999.783 ms
+  movlw 246
+  movwf duration
+  clrf duration2
+  call wait
+  call wait
+  call wait
+  call wait
+  call wait
+  call wait
+  return
+
+wait: ; 992.022 ms
+    call wait2
+    incfsz duration
+    goto wait
+    return
+    
+wait2:
+    incfsz duration2
+    goto wait2
+    return
+
 
 end resetVec
