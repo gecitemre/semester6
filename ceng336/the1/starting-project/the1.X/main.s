@@ -142,7 +142,6 @@ metronome:
     incfsz duration
     return
     movff speed_constant, duration
-            comf LATA
     call overflow
     return
     
