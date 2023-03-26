@@ -74,14 +74,14 @@ main:
     call wait1000ms
     clrf LATA
     setf PORTB
-
+    movff speed_constant, duration
     
 main_loop:
   call check_buttons
   movf pause
   bnz paused
   call metronome
-  movff LATA, lata_abstract
+  movff lata_abstract, LATA
 paused:
   goto main_loop
 
@@ -105,7 +105,8 @@ check_buttons:
 rb0_pressed:
     movf pause
     bnz resume
-    movff LATA, 00000100B
+    movlw 00000100B
+    movwf LATA
 resume:
     comf pause    
     return
@@ -116,7 +117,7 @@ rb1_pressed:
     ; 1x speed if not skipped
     goto x2
     ; 2x speed if skipped
-    movlw 198
+    movlw 199
 x2:
     movwf speed_constant
     return
@@ -149,13 +150,13 @@ overflow:
     return
 
 overflow2:
-    bcf LATA, 1
+    bcf lata_abstract, 1
     incf quarter
     rlncf bar_length, W
     cpfseq quarter
     goto bar_length_not_reached
     clrf quarter
-    bsf LATA, 1
+    bsf lata_abstract, 1
 bar_length_not_reached:
     btg lata_abstract, 0  ; 198: 498.188 ms | 226: 247.814 ms
     return
