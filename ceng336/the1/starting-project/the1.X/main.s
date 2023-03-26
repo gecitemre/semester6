@@ -22,12 +22,12 @@ CONFIG XINST = OFF      ; Extended Instruction Set Enable bit (Instruction set e
 
 ; GLOBAL SYMBOLS
 ; You need to add your variables here if you want to debug them.
-GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter
+GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter, bar_length_copy
 
 ; Define space for the variables in RAM
 PSECT udata_acs
 duration:
-    DS 1 
+    DS 1
 duration2:
     DS 1
 duration3:
@@ -45,6 +45,8 @@ lata_abstract:
 bar_length:
     DS 1
 quarter:
+    DS 1
+bar_length_copy:
     DS 1
 
 PSECT resetVec,class=CODE,reloc=2
@@ -64,6 +66,7 @@ main:
     clrf quarter
     movlw 4
     movwf bar_length
+    movwf bar_length_copy
     movlw 199
     ;movlw 226
     movwf speed_constant
@@ -73,7 +76,6 @@ main:
     movwf LATA
     call wait1000ms
     clrf LATA
-    setf PORTB
     movff speed_constant, duration
     
 main_loop:
@@ -125,15 +127,15 @@ x2:
 
 rb2_pressed:
     movlw 4
-    movwf bar_length
+    movwf bar_length_copy
     return
     
 rb3_pressed:
-    decf bar_length
+    decf bar_length_copy
     return
 
 rb4_pressed:
-    incf bar_length
+    incf bar_length_copy
     return
 
 metronome:
@@ -153,8 +155,10 @@ overflow2:
     bcf lata_abstract, 1
     incf quarter
     rlncf bar_length, W
+    decf WREG
     cpfseq quarter
     goto bar_length_not_reached
+    movff bar_length_copy, bar_length
     clrf quarter
     bsf lata_abstract, 1
 bar_length_not_reached:
