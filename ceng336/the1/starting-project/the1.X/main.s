@@ -22,7 +22,7 @@ CONFIG XINST = OFF      ; Extended Instruction Set Enable bit (Instruction set e
 
 ; GLOBAL SYMBOLS
 ; You need to add your variables here if you want to debug them.
-GLOBAL duration, duration2, duration3, last_portb, pause, temp, increment
+GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter
 
 ; Define space for the variables in RAM
 PSECT udata_acs
@@ -38,7 +38,13 @@ pause:
     DS 1
 temp:
     DS 1
-increment:
+speed_constant:
+    DS 1
+lata_abstract:
+    DS 1
+bar_length:
+    DS 1
+quarter:
     DS 1
 
 PSECT resetVec,class=CODE,reloc=2
@@ -54,9 +60,16 @@ main:
     clrf last_portb
     clrf pause
     clrf temp
+    clrf lata_abstract
+    clrf quarter
+    movlw 4
+    movwf bar_length
+    movlw 199
+    ;movlw 226
+    movwf speed_constant
     movlw 100
     movwf duration
-    movlw 00000111B ; light up RA1, RA2, RA3
+    movlw 00000111B ; light up RA1, RA2, RA0
     movwf LATA
     call wait1000ms
     clrf LATA
@@ -68,42 +81,64 @@ main_loop:
   movf pause
   bnz paused
   call metronome
+  movff LATA, lata_abstract
 paused:
   goto main_loop
 
 check_buttons:
     comf PORTB, 0
     andwf last_portb, 0
-    movwf temp
-    btfsc temp, 0
+    btfsc WREG, 0
     call rb0_pressed
-    btfsc temp, 1
+    btfsc WREG, 1
     call rb1_pressed
-    btfsc temp, 2
+    btfsc WREG, 2
     call rb2_pressed
-    btfsc temp, 3
+    btfsc WREG, 3
     call rb3_pressed
-    btfsc temp, 4
+    btfsc WREG, 4
     call rb4_pressed
     movff PORTB, last_portb
     return
   
     
 rb0_pressed:
-    comf pause
+    movf pause
+    bnz resume
+    movff LATA, 00000100B
+resume:
+    comf pause    
     return
     
 rb1_pressed:
+    movlw 226
+    CPFSEQ speed_constant
+    ; 1x speed if not skipped
+    goto x2
+    ; 2x speed if skipped
+    movlw 198
+x2:
+    movwf speed_constant
+    return
+    
+
 rb2_pressed:
+    movlw 4
+    movwf bar_length
+    return
+    
 rb3_pressed:
+    decf bar_length
+    return
+
 rb4_pressed:
+    incf bar_length
+    return
 
 metronome:
-    
     incfsz duration
     return
-    movlw 197
-    movwf duration
+    movff speed_constant, duration
     call overflow
     return
     
@@ -114,7 +149,15 @@ overflow:
     return
 
 overflow2:
-    comf LATA  ; 500.486 ms
+    bcf LATA, 1
+    incf quarter
+    rlncf bar_length, W
+    cpfseq quarter
+    goto bar_length_not_reached
+    clrf quarter
+    bsf LATA, 1
+bar_length_not_reached:
+    btg lata_abstract, 0  ; 198: 498.188 ms | 226: 247.814 ms
     return
 
   
