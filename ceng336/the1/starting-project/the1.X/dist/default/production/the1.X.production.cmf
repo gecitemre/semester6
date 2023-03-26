@@ -13,8 +13,8 @@
 %PSECTS
 $build/default/production/main.o
 resetVec CODE 0 FFFC FFFC 4 1
-CODE - 0 0 0 F2 1
-udata_acs COMRAM 1 0 0 A 1
+CODE - 0 0 0 FA 1
+udata_acs COMRAM 1 0 0 B 1
 config CONFIG 4 300001 300001 D 1
 # %UNUSED Section
 # This section enumerates the unused ranges of each CLASS. Each entry
@@ -34,18 +34,18 @@ BANK6 600-6FF 1
 BANK7 700-7FF 1
 BANK8 800-8FF 1
 BANK9 900-9FF 1
-CONST F2-FFFB 1
+CONST FA-FFFB 1
 IDLOC 200000-200007 1
 SMALLCONST 1000-FFFB 1
-CODE F2-FFFB 1
+CODE FA-FFFB 1
 BANK10 A00-AFF 1
 BANK11 B00-BFF 1
 BANK12 C00-CFF 1
 BANK13 D00-DFF 1
 BANK14 E00-EFF 1
 BANK15 F00-F7F 1
-BIGRAM F2-F7F 1
-COMRAM A-7F 1
+BIGRAM FA-F7F 1
+COMRAM B-7F 1
 CONFIG 300000-300000 1
 EEDATA F00000-F003FF 1
 MEDIUMCONST 1000-FFFB 1
@@ -63,121 +63,124 @@ MEDIUMCONST 1000-FFFB 1
 # All other numeric values are in decimal.
 %LINETAB
 $build/default/production/main.o
-0 CODE ABS >55:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-0 CODE ABS >56:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-2 CODE ABS >57:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-4 CODE ABS >58:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-6 CODE ABS >59:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8 CODE ABS >60:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A CODE ABS >61:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-C CODE ABS >62:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-E CODE ABS >63:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-10 CODE ABS >64:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-12 CODE ABS >65:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-14 CODE ABS >66:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-16 CODE ABS >67:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-18 CODE ABS >69:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-1A CODE ABS >70:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-1C CODE ABS >71:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-1E CODE ABS >72:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-20 CODE ABS >73:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-22 CODE ABS >74:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-26 CODE ABS >75:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-28 CODE ABS >76:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-2A CODE ABS >77:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-2E CODE ABS >79:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-2E CODE ABS >80:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-32 CODE ABS >81:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-34 CODE ABS >82:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-36 CODE ABS >83:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-3A CODE ABS >84:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-3E CODE ABS >85:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-3E CODE ABS >86:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-42 CODE ABS >88:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-42 CODE ABS >89:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-44 CODE ABS >90:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-46 CODE ABS >91:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-48 CODE ABS >92:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-4C CODE ABS >93:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-4E CODE ABS >94:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-52 CODE ABS >95:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-54 CODE ABS >96:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-58 CODE ABS >97:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-5A CODE ABS >98:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-5E CODE ABS >99:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-60 CODE ABS >100:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-64 CODE ABS >101:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-68 CODE ABS >102:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-6A CODE ABS >105:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-6A CODE ABS >106:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-6C CODE ABS >107:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-6E CODE ABS >108:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-70 CODE ABS >109:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-72 CODE ABS >110:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-72 CODE ABS >111:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-74 CODE ABS >112:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-76 CODE ABS >114:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-76 CODE ABS >115:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-78 CODE ABS >116:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-7A CODE ABS >118:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-7E CODE ABS >120:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-80 CODE ABS >121:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-80 CODE ABS >122:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-82 CODE ABS >123:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-84 CODE ABS >126:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-84 CODE ABS >127:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-86 CODE ABS >128:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-88 CODE ABS >129:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8A CODE ABS >131:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8A CODE ABS >132:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8C CODE ABS >133:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8E CODE ABS >135:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-8E CODE ABS >136:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-90 CODE ABS >137:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-92 CODE ABS >139:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-92 CODE ABS >140:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-94 CODE ABS >141:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-96 CODE ABS >142:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-9A CODE ABS >143:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-9E CODE ABS >144:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A0 CODE ABS >146:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A0 CODE ABS >147:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A2 CODE ABS >148:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A4 CODE ABS >149:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-A8 CODE ABS >150:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-AA CODE ABS >152:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-AA CODE ABS >153:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-AC CODE ABS >154:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-AE CODE ABS >155:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-B0 CODE ABS >156:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-B2 CODE ABS >157:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-B6 CODE ABS >158:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-B8 CODE ABS >159:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-BA CODE ABS >160:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-BA CODE ABS >161:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-BC CODE ABS >162:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-BE CODE ABS >165:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-BE CODE ABS >166:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-C0 CODE ABS >167:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-C2 CODE ABS >168:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-C4 CODE ABS >169:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-C8 CODE ABS >170:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-CC CODE ABS >171:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-D0 CODE ABS >172:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-D4 CODE ABS >173:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-D8 CODE ABS >174:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-DC CODE ABS >175:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-DE CODE ABS >177:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-DE CODE ABS >178:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-E2 CODE ABS >179:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-E4 CODE ABS >180:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-E8 CODE ABS >181:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-EA CODE ABS >183:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-EA CODE ABS >184:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-EC CODE ABS >185:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-F0 CODE ABS >186:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-FFFC resetVec CODE >51:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
-FFFC resetVec CODE >52:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+0 CODE ABS >57:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+0 CODE ABS >58:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+2 CODE ABS >59:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+4 CODE ABS >60:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+6 CODE ABS >61:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8 CODE ABS >62:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A CODE ABS >63:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C CODE ABS >64:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+E CODE ABS >65:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+10 CODE ABS >66:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+12 CODE ABS >67:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+14 CODE ABS >68:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+16 CODE ABS >69:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+18 CODE ABS >70:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+1A CODE ABS >72:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+1C CODE ABS >73:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+1E CODE ABS >74:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+20 CODE ABS >75:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+22 CODE ABS >76:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+24 CODE ABS >77:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+28 CODE ABS >78:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+2A CODE ABS >79:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+2E CODE ABS >81:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+2E CODE ABS >82:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+32 CODE ABS >83:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+34 CODE ABS >84:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+36 CODE ABS >85:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+3A CODE ABS >86:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+3E CODE ABS >87:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+3E CODE ABS >88:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+42 CODE ABS >90:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+42 CODE ABS >91:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+44 CODE ABS >92:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+46 CODE ABS >93:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+48 CODE ABS >94:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+4C CODE ABS >95:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+4E CODE ABS >96:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+52 CODE ABS >97:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+54 CODE ABS >98:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+58 CODE ABS >99:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+5A CODE ABS >100:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+5E CODE ABS >101:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+60 CODE ABS >102:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+64 CODE ABS >103:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+68 CODE ABS >104:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+6A CODE ABS >107:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+6A CODE ABS >108:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+6C CODE ABS >109:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+6E CODE ABS >110:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+70 CODE ABS >111:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+72 CODE ABS >112:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+72 CODE ABS >113:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+74 CODE ABS >114:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+76 CODE ABS >116:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+76 CODE ABS >117:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+78 CODE ABS >118:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+7A CODE ABS >120:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+7E CODE ABS >122:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+80 CODE ABS >123:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+80 CODE ABS >124:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+82 CODE ABS >125:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+84 CODE ABS >128:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+84 CODE ABS >129:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+86 CODE ABS >130:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+88 CODE ABS >131:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8A CODE ABS >133:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8A CODE ABS >134:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8C CODE ABS >135:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8E CODE ABS >137:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+8E CODE ABS >138:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+90 CODE ABS >139:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+92 CODE ABS >141:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+92 CODE ABS >142:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+94 CODE ABS >143:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+96 CODE ABS >144:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+9A CODE ABS >145:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+9C CODE ABS >146:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A0 CODE ABS >147:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A2 CODE ABS >149:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A2 CODE ABS >150:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A4 CODE ABS >151:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+A6 CODE ABS >152:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+AA CODE ABS >153:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+AC CODE ABS >155:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+AC CODE ABS >156:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+AE CODE ABS >157:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+B0 CODE ABS >158:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+B2 CODE ABS >159:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+B4 CODE ABS >160:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+B6 CODE ABS >161:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+BA CODE ABS >162:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+BE CODE ABS >163:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C0 CODE ABS >164:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C2 CODE ABS >165:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C2 CODE ABS >166:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C4 CODE ABS >167:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C6 CODE ABS >170:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C6 CODE ABS >171:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+C8 CODE ABS >172:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+CA CODE ABS >173:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+CC CODE ABS >174:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+D0 CODE ABS >175:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+D4 CODE ABS >176:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+D8 CODE ABS >177:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+DC CODE ABS >178:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+E0 CODE ABS >179:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+E4 CODE ABS >180:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+E6 CODE ABS >182:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+E6 CODE ABS >183:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+EA CODE ABS >184:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+EC CODE ABS >185:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+F0 CODE ABS >186:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+F2 CODE ABS >188:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+F2 CODE ABS >189:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+F4 CODE ABS >190:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+F8 CODE ABS >191:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+FFFC resetVec CODE >53:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
+FFFC resetVec CODE >54:/home/emre/GitHub/semester6/ceng336/the1/starting-project/the1.X/main.s
 # %SYMTAB Section
 # An enumeration of all symbols in the program.
 # The beginning of the section is indicated by %SYMTAB.
@@ -191,51 +194,51 @@ FFFC resetVec CODE >52:/home/bs2020/e2521581/GitHub/semester6/ceng336/the1/start
 # is the name of the object file in which the symbol was defined.
 %SYMTAB
 __Hspace_0 10000 0 ABS 0 - -
-__Hspace_1 A 0 ABS 0 - -
+__Hspace_1 B 0 ABS 0 - -
 __Hspace_3 0 0 ABS 0 - -
 __Hspace_4 60000F 0 ABS 0 - -
 duration 0 0 COMRAM 1 udata_acs build/default/production/main.o
-__Hudata_bank0 F2 0 ABS 0 udata_bank0 -
-__Hudata_bank1 F2 0 ABS 0 udata_bank1 -
-__Hudata_bank2 F2 0 ABS 0 udata_bank2 -
-__Hudata_bank3 F2 0 ABS 0 udata_bank3 -
-__Hudata_bank4 F2 0 ABS 0 udata_bank4 -
-__Hudata_bank5 F2 0 ABS 0 udata_bank5 -
-__Hudata_bank6 F2 0 ABS 0 udata_bank6 -
-__Hudata_bank7 F2 0 ABS 0 udata_bank7 -
-__Hudata_bank8 F2 0 ABS 0 udata_bank8 -
-__Hudata_bank9 F2 0 ABS 0 udata_bank9 -
+__Hudata_bank0 FA 0 ABS 0 udata_bank0 -
+__Hudata_bank1 FA 0 ABS 0 udata_bank1 -
+__Hudata_bank2 FA 0 ABS 0 udata_bank2 -
+__Hudata_bank3 FA 0 ABS 0 udata_bank3 -
+__Hudata_bank4 FA 0 ABS 0 udata_bank4 -
+__Hudata_bank5 FA 0 ABS 0 udata_bank5 -
+__Hudata_bank6 FA 0 ABS 0 udata_bank6 -
+__Hudata_bank7 FA 0 ABS 0 udata_bank7 -
+__Hudata_bank8 FA 0 ABS 0 udata_bank8 -
+__Hudata_bank9 FA 0 ABS 0 udata_bank9 -
 pause 4 0 COMRAM 1 udata_acs build/default/production/main.o
 quarter 9 0 COMRAM 1 udata_acs build/default/production/main.o
-__LresetVec F2 0 ABS 0 resetVec -
-__Hudata_bank10 F2 0 ABS 0 udata_bank10 -
-__Hudata_bank11 F2 0 ABS 0 udata_bank11 -
-__Hudata_bank12 F2 0 ABS 0 udata_bank12 -
-__Hudata_bank13 F2 0 ABS 0 udata_bank13 -
-__Hudata_bank14 F2 0 ABS 0 udata_bank14 -
-__Hudata_bank15 F2 0 ABS 0 udata_bank15 -
-__HresetVec F2 0 ABS 0 resetVec -
-__Hedata F2 0 ABS 0 edata -
-__Hudata F2 0 ABS 0 udata -
+__LresetVec FA 0 ABS 0 resetVec -
+__Hudata_bank10 FA 0 ABS 0 udata_bank10 -
+__Hudata_bank11 FA 0 ABS 0 udata_bank11 -
+__Hudata_bank12 FA 0 ABS 0 udata_bank12 -
+__Hudata_bank13 FA 0 ABS 0 udata_bank13 -
+__Hudata_bank14 FA 0 ABS 0 udata_bank14 -
+__Hudata_bank15 FA 0 ABS 0 udata_bank15 -
+__HresetVec FA 0 ABS 0 resetVec -
+__Hedata FA 0 ABS 0 edata -
+__Hudata FA 0 ABS 0 udata -
 __Hconfig 30000E 0 CONFIG 4 config -
-__Ledata F2 0 ABS 0 edata -
-__Ludata F2 0 ABS 0 udata -
-__HCODE F2 0 ABS 0 CODE -
-__Hcode F2 0 ABS 0 code -
-__Hdata F2 0 ABS 0 data -
+__Ledata FA 0 ABS 0 edata -
+__Ludata FA 0 ABS 0 udata -
+__HCODE FA 0 ABS 0 CODE -
+__Hcode FA 0 ABS 0 code -
+__Hdata FA 0 ABS 0 data -
 __LCODE 0 0 ABS 0 CODE -
-__Lcode F2 0 ABS 0 code -
-__Ldata F2 0 ABS 0 data -
+__Lcode FA 0 ABS 0 code -
+__Ldata FA 0 ABS 0 data -
 __S0 10000 0 ABS 0 - -
-__S1 A 0 ABS 0 - -
+__S1 B 0 ABS 0 - -
 __S3 0 0 ABS 0 - -
 temp 5 0 COMRAM 1 udata_acs build/default/production/main.o
-__Ludata_bank10 F2 0 ABS 0 udata_bank10 -
-__Ludata_bank11 F2 0 ABS 0 udata_bank11 -
-__Ludata_bank12 F2 0 ABS 0 udata_bank12 -
-__Ludata_bank13 F2 0 ABS 0 udata_bank13 -
-__Ludata_bank14 F2 0 ABS 0 udata_bank14 -
-__Ludata_bank15 F2 0 ABS 0 udata_bank15 -
+__Ludata_bank10 FA 0 ABS 0 udata_bank10 -
+__Ludata_bank11 FA 0 ABS 0 udata_bank11 -
+__Ludata_bank12 FA 0 ABS 0 udata_bank12 -
+__Ludata_bank13 FA 0 ABS 0 udata_bank13 -
+__Ludata_bank14 FA 0 ABS 0 udata_bank14 -
+__Ludata_bank15 FA 0 ABS 0 udata_bank15 -
 duration2 1 0 COMRAM 1 udata_acs build/default/production/main.o
 duration3 2 0 COMRAM 1 udata_acs build/default/production/main.o
 __Lconfig 0 0 CONFIG 4 config -
@@ -245,20 +248,21 @@ __Lspace_1 0 0 ABS 0 - -
 __Lspace_3 0 0 ABS 0 - -
 __Lspace_4 0 0 ABS 0 - -
 lata_abstract 7 0 COMRAM 1 udata_acs build/default/production/main.o
-__Ludata_bank0 F2 0 ABS 0 udata_bank0 -
-__Ludata_bank1 F2 0 ABS 0 udata_bank1 -
-__Ludata_bank2 F2 0 ABS 0 udata_bank2 -
-__Ludata_bank3 F2 0 ABS 0 udata_bank3 -
-__Ludata_bank4 F2 0 ABS 0 udata_bank4 -
-__Ludata_bank5 F2 0 ABS 0 udata_bank5 -
-__Ludata_bank6 F2 0 ABS 0 udata_bank6 -
-__Ludata_bank7 F2 0 ABS 0 udata_bank7 -
-__Ludata_bank8 F2 0 ABS 0 udata_bank8 -
-__Ludata_bank9 F2 0 ABS 0 udata_bank9 -
+__Ludata_bank0 FA 0 ABS 0 udata_bank0 -
+__Ludata_bank1 FA 0 ABS 0 udata_bank1 -
+__Ludata_bank2 FA 0 ABS 0 udata_bank2 -
+__Ludata_bank3 FA 0 ABS 0 udata_bank3 -
+__Ludata_bank4 FA 0 ABS 0 udata_bank4 -
+__Ludata_bank5 FA 0 ABS 0 udata_bank5 -
+__Ludata_bank6 FA 0 ABS 0 udata_bank6 -
+__Ludata_bank7 FA 0 ABS 0 udata_bank7 -
+__Ludata_bank8 FA 0 ABS 0 udata_bank8 -
+__Ludata_bank9 FA 0 ABS 0 udata_bank9 -
+bar_length_copy A 0 COMRAM 1 udata_acs build/default/production/main.o
 speed_constant 6 0 COMRAM 1 udata_acs build/default/production/main.o
-__Hudata_acs F2 0 ABS 0 udata_acs -
+__Hudata_acs FA 0 ABS 0 udata_acs -
 last_portb 3 0 COMRAM 1 udata_acs build/default/production/main.o
-__Ludata_acs F2 0 ABS 0 udata_acs -
+__Ludata_acs FA 0 ABS 0 udata_acs -
 # %SPLITSTAB Section
 # This section enumerates all the psect splits performed by the assembler.
 # The beginning of the section is indicated by %SPLITSTAB.
@@ -284,7 +288,7 @@ __Ludata_acs F2 0 ABS 0 udata_acs -
 # All other numeric quantities are in decimal.
 %SEGMENTS
 resetVec 0 FFFC FFFC 4 1
-udata_acs 1 0 0 A 1
+udata_acs 1 0 0 B 1
 # %NOTES Section
 # This section contains data of all the note-psects.  The beginning of the section
 # is indicated by %NOTES. The first line indicates the name and decimal
