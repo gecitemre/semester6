@@ -1,0 +1,15 @@
+testbench for "pic18f4620" is
+   begin
+      process is
+         begin
+            wait for 1750 ms;
+            RB4 <= '1';
+            wait for 10 ms;
+            RB4 <= '0';
+            wait for 50 ms;
+            RB4 <= '1';
+            wait for 10 ms;
+            RB4 <= '0';
+            wait;
+         end process;
+   end testbench;
