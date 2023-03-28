@@ -63,19 +63,21 @@ main:
     clrf pause
     clrf temp
     clrf lata_abstract
-    clrf quarter
+    movlw 255
+    movwf quarter
     movlw 4
     movwf bar_length
     movwf bar_length_copy
-    movlw 199
-    ;movlw 226
+    movlw 202
+    ;movlw 230
     movwf speed_constant
     movlw 100
     movwf duration
     movlw 00000111B ; light up RA1, RA2, RA0
     movwf LATA
     call wait1000ms
-    clrf LATA
+    movlw 00000011B
+    movwf lata_abstract
     movff speed_constant, duration
     
 main_loop:
@@ -83,6 +85,8 @@ main_loop:
   movf pause
   bnz paused
   call metronome
+  movf lata_abstract, W
+  cpfseq LATA
   movff lata_abstract, LATA
 paused:
   goto main_loop
@@ -105,21 +109,22 @@ check_buttons:
   
     
 rb0_pressed:
+    movff lata_abstract, LATA
     movf pause
     bnz resume
     movlw 00000100B
     movwf LATA
 resume:
-    comf pause    
+    comf pause
     return
     
 rb1_pressed:
-    movlw 226
+    movlw 230
     CPFSEQ speed_constant
     ; 1x speed if not skipped
     goto x2
     ; 2x speed if skipped
-    movlw 199
+    movlw 202
 x2:
     movwf speed_constant
     return
@@ -159,10 +164,11 @@ overflow2:
     cpfseq quarter
     goto bar_length_not_reached
     movff bar_length_copy, bar_length
-    clrf quarter
+    movlw 255
+    movwf quarter
     bsf lata_abstract, 1
 bar_length_not_reached:
-    btg lata_abstract, 0  ; 198: 498.188 ms | 226: 247.814 ms
+    btg lata_abstract, 0  ; 202: 499.725 ms | 230: 247.814 ms
     return
 
   
