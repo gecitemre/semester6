@@ -119,7 +119,7 @@ resume:
     return
     
 rb1_pressed:
-    movlw 230
+    movlw 229
     CPFSEQ speed_constant
     ; 1x speed if not skipped
     goto x2
@@ -132,15 +132,15 @@ x2:
 
 rb2_pressed:
     movlw 4
-    movwf bar_length_copy
+    movwf bar_length
     return
     
 rb3_pressed:
-    decf bar_length_copy
+    decf bar_length
     return
 
 rb4_pressed:
-    incf bar_length_copy
+    incf bar_length
     return
 
 metronome:
@@ -163,12 +163,11 @@ overflow2:
     decf WREG
     cpfseq quarter
     goto bar_length_not_reached
-    movff bar_length_copy, bar_length
     movlw 255
     movwf quarter
     bsf lata_abstract, 1
 bar_length_not_reached:
-    btg lata_abstract, 0  ; 202: 499.725 ms | 230: 247.814 ms
+    btg lata_abstract, 0  ; 202: 499.725 ms | 229: 250.893 ms
     return
 
   
