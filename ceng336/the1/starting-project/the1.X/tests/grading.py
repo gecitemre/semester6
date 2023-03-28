@@ -1,3 +1,4 @@
+import pickle
 from dataclasses import dataclass
 
 def bin8(value: int):
@@ -57,40 +58,42 @@ def get_longest_match(sequence, target):
     maxi = max(reversed(range(len(prefixes))), key=lambda i: len(prefixes[i]))
     return maxi, prefixes[maxi]
 
-class ReportSection:
-    def __init__(self, name: float, max_grade: float):
-        self.name = name
-        self.max_grade = max_grade
-        self.grade = 0.0
-
-    def grade_str(self) -> str:
-        if self.max_grade > 0:
-            return "%.1f / %.1f" % (self.grade, self.max_grade)
-        else:
-            return "%.1f" % self.grade
-
 class Report:
-    def __init__(self):
-        self.grade_log = []
+    def __init__(self, rubric: list):
+        self.grades = {}
+        self.rubric = rubric
 
-    def add_section(self, name, grade):
-        new_section = ReportSection(name, grade)
-        self.grade_log.append(new_section)
-        return new_section
+    def set_grade(self, name: str, grade: float):
+        self.grades[name] = grade
+        matches = [r for r in self.rubric if r[0] == name]
+        if len(matches) != 1:
+            raise ValueError("Rubric error: " + str(matches))
+        r = matches[0]
+        scaled = round(grade * r[1], 2)
+        print(f'Grade for "{r[0]}": {scaled:.2f} / {r[1]:.1f}')
+
+    def save_grades(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump(self.grades, f)
+
+    def load_grades(self, filename):
+        with open(filename, 'rb') as f:
+            self.grades = pickle.load(f)
 
     def report_str(self):
-        if len(self.grade_log) == 0:
-            self.add_section("Failed to execute tests", 0.0)
-        grade_items = [g.grade_str() for g in self.grade_log]
-        f = "{0:>" + str(max([len(s) for s in grade_items])) + "}  {1}"
-        grade_report = "\n".join([f.format(g, r.name) for g, r in zip(grade_items, self.grade_log)])
+        def process_rubric_item(r):
+            grade = self.grades[r[0]] if r[0] in self.grades else 0.0
+            grade = round(grade * r[1], 2)
+            return [r[0], grade, r[1]]
+        grade_items = [process_rubric_item(g) for g in self.rubric]
+        f = "{0:>5} / {1:>4}  {2}"
+        grade_report = "\n".join([f.format(g[1], g[2], g[0]) for g in grade_items])
 
-        total_grade = sum([g.grade for g in self.grade_log])
-        max_grade = sum([g.max_grade for g in self.grade_log])
-        return f"GRADE\n{grade_report}\nFINAL GRADE: {total_grade:.1f}/{max_grade:.1f}"
+        total_grade = sum([g[1] for g in grade_items])
+        max_grade = sum([g[1] for g in self.rubric])
+        return f"GRADE\n{grade_report}\nTOTAL GRADE: {total_grade:.1f}/{max_grade:.1f}"
 
-def record_porta(m, max_history: int, max_cycles: int, max_flicker: int = 1000):
-    flickers = []
+def record_porta(m, max_history: int, max_cycles: int, flicker_duration: int = 1000, max_changes: int = 500):
     # Watch writes to this register
     m.watch("PORTA W")
     m.watch("LATA W")
@@ -99,23 +102,35 @@ def record_porta(m, max_history: int, max_cycles: int, max_flicker: int = 1000):
     value = m.get("LATA")
     current = RegRecording(value, 0)
     cycles = 0
+    changes = 0
     while len(history) < max_history:
-        m.run()
+        if not m.run_timeout():
+            print("Timed out while waiting for a PORTA change!")
+            m.clear_breakpoints()
+            current.time += m.stopwatch()
+            history.append(current)
+            return history
         value = m.get("LATA")
         time = m.stopwatch()
         current.time += time
         cycles += time
         if value != current.data:
-            print("PORTA changed to", str(value) + " (" + bin8(value) + ") after", str(time/1e6) + "s", end = " ")
-            if current.time > max_flicker:  # Don't record if too short
+            print("PORTA changed from", str(current.data), "to", str(value) + " (" + bin8(value) + ") after", str(time/1e6) + "s", end = "")
+            if current.time > flicker_duration:  # Don't record if too short
                 history.append(current)
-            elif len(history) > 1:  # Ignore flickers at the start
-                flickers.append(current)
-                print("(FLICKER)", end="")
-            print()
+                print()
+            else:
+                print(" (FLICKER, ignored)")
             current = RegRecording(value, 0)
         if cycles > max_cycles:
-            if current.time > max_flicker:  # Don't record if too short
+            print(f"Aborting PORTA recording: Exceeded the maximum duration of {max_cycles} cycles")
+            if current.time > flicker_duration or not history:
+                history.append(current)
+            break
+        changes += 1
+        if changes > max_changes:
+            print(f"Aborting PORTA recording: Exceeded the maximum number of changes ({max_changes})")
+            if current.time > flicker_duration or not history:
                 history.append(current)
             break
     m.clear_breakpoints()
@@ -127,7 +142,7 @@ def click_button(m, pin):
     """
     print("Pressing & releasing "+ pin.upper() + "...")
     m.exec("write pin " + pin + " high")
-    m.stepi(50_000)
+    m.stepi(10_000)
     m.exec("write pin " + pin + " low")
     m.stepi(50_000)
 

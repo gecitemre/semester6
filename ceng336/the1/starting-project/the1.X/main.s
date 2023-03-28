@@ -22,7 +22,7 @@ CONFIG XINST = OFF      ; Extended Instruction Set Enable bit (Instruction set e
 
 ; GLOBAL SYMBOLS
 ; You need to add your variables here if you want to debug them.
-GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter, bar_length_copy
+GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter
 
 ; Define space for the variables in RAM
 PSECT udata_acs
@@ -46,8 +46,7 @@ bar_length:
     DS 1
 quarter:
     DS 1
-bar_length_copy:
-    DS 1
+
 
 PSECT resetVec,class=CODE,reloc=2
 resetVec:
@@ -67,7 +66,6 @@ main:
     movwf quarter
     movlw 4
     movwf bar_length
-    movwf bar_length_copy
     movlw 202
     ;movlw 230
     movwf speed_constant
@@ -92,8 +90,8 @@ paused:
   goto main_loop
 
 check_buttons:
-    comf PORTB, 0
-    andwf last_portb, 0
+    comf PORTB, W
+    andwf last_portb, W
     btfsc WREG, 0
     call rb0_pressed
     btfsc WREG, 1
