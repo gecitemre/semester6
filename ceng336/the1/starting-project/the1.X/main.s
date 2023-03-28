@@ -115,7 +115,7 @@ rb0_pressed:
     movlw 00000100B
     movwf LATA
 resume:
-    comf pause
+    comf pause 
     return
     
 rb1_pressed:
