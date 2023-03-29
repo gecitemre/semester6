@@ -22,7 +22,7 @@ CONFIG XINST = OFF      ; Extended Instruction Set Enable bit (Instruction set e
 
 ; GLOBAL SYMBOLS
 ; You need to add your variables here if you want to debug them.
-GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter
+GLOBAL duration, duration2, duration3, last_portb, pause, temp, speed_constant, lata_abstract, bar_length, quarter, new_portb
 
 ; Define space for the variables in RAM
 PSECT udata_acs
@@ -46,6 +46,8 @@ bar_length:
     DS 1
 quarter:
     DS 1
+new_portb:
+    DS 1
 
 
 PSECT resetVec,class=CODE,reloc=2
@@ -62,11 +64,11 @@ main:
     clrf pause
     clrf temp
     clrf lata_abstract
-    movlw 255
+    movlw 0
     movwf quarter
     movlw 4
     movwf bar_length
-    movlw 202
+    movlw 205
     ;movlw 230
     movwf speed_constant
     movlw 100
@@ -90,8 +92,10 @@ paused:
   goto main_loop
 
 check_buttons:
-    comf PORTB, W
+    movff PORTB, new_portb
+    comf new_portb, W
     andwf last_portb, W
+    movff new_portb, last_portb
     btfsc WREG, 0
     call rb0_pressed
     btfsc WREG, 1
@@ -102,7 +106,6 @@ check_buttons:
     call rb3_pressed
     btfsc WREG, 4
     call rb4_pressed
-    movff PORTB, last_portb
     return
   
     
@@ -117,12 +120,12 @@ resume:
     return
     
 rb1_pressed:
-    movlw 229
+    movlw 231
     CPFSEQ speed_constant
     ; 1x speed if not skipped
     goto x2
     ; 2x speed if skipped
-    movlw 202
+    movlw 205
 x2:
     movwf speed_constant
     return
@@ -155,17 +158,17 @@ overflow:
     return
 
 overflow2:
+    btg lata_abstract, 0  ; 205: 499.725 ms | 231: 250.893 ms
     bcf lata_abstract, 1
     incf quarter
     rlncf bar_length, W
-    decf WREG
-    cpfseq quarter
-    goto bar_length_not_reached
-    movlw 255
+    cpfslt quarter
+    goto bar_length_reached
+    return
+bar_length_reached:
+    movlw 0
     movwf quarter
     bsf lata_abstract, 1
-bar_length_not_reached:
-    btg lata_abstract, 0  ; 202: 499.725 ms | 229: 250.893 ms
     return
 
   
