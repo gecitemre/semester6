@@ -1,0 +1,5 @@
+20 20 0 2
+5 5 4
+./execs/bomber_inek 1000 20 20
+10 10 4
+./execs/bomber_inek 1000 20 20
