@@ -107,14 +107,24 @@ int main()
         b.pid = fork();
         if (b.pid == 0)
         {
-            dup2(b.pipe[0], STDIN_FILENO);
+            // Child writes and reads from pipe[1]
+            dup2(b.pipe[1], STDIN_FILENO);
             dup2(b.pipe[1], STDOUT_FILENO);
+            close(b.pipe[0]);
             if (execvp(args[0], args) == -1)
             {
                 perror("execvp");
                 exit(1);
             }
         }
+        else if (b.pid == -1)
+        {
+            perror("fork");
+            exit(1);
+        }
+        
+        // Parent writes and reads from pipe[0]
+        close(b.pipe[1]);
         bombers.push_back(b);
     }
 
@@ -134,26 +144,26 @@ int main()
             nfds = max(nfds, bomb.pipe[0]);
         }
         int temp[2];
-        pipe(temp);
+        PIPE(temp);
         FD_SET(temp[0], &readfds);
         if (select(nfds + 1, &readfds, NULL, NULL, NULL) == -1)
         {
             perror("select");
             exit(1);
         }
-        for (bomber &b : bombers)
+        for (bomber &ready_bomber : bombers)
         {
-            if (FD_ISSET(b.pipe[0], &readfds))
+            if (FD_ISSET(ready_bomber.pipe[0], &readfds))
             {
-                im incoming = read_message(b.pipe[0], b.pid);
+                im incoming = read_message(ready_bomber.pipe[0], ready_bomber.pid);
                 switch (incoming.type)
                 {
                 case BOMBER_START:
-                    send_bomber_location(b);
+                    send_bomber_location(ready_bomber);
                     break;
 
                 case BOMBER_MOVE:
-                    if (distance(b.position, incoming.data.target_position) != 1)
+                    if (distance(ready_bomber.position, incoming.data.target_position) != 1)
                     {
                         goto case_bomber_move_exit;
                     }
@@ -167,10 +177,10 @@ int main()
                         }
                     }
 
-                    for (bomber &b : bombers)
+                    for (bomber &other_bomber : bombers)
                     {
                         // Check if there is a bomber in the target position
-                        if (b.position.x == incoming.data.target_position.x && b.position.y == incoming.data.target_position.y)
+                        if (other_bomber.position.x == incoming.data.target_position.x && other_bomber.position.y == incoming.data.target_position.y)
                         {
                             goto case_bomber_move_exit;
                         }
@@ -182,10 +192,10 @@ int main()
                         goto case_bomber_move_exit;
                     }
 
-                    b.position = incoming.data.target_position;
+                    ready_bomber.position = incoming.data.target_position;
 
                 case_bomber_move_exit:
-                    send_bomber_location(b);
+                    send_bomber_location(ready_bomber);
                     break;
 
                 case BOMBER_PLANT:
@@ -193,9 +203,9 @@ int main()
                     bomber_plant_outgoing.type = BOMBER_PLANT_RESULT;
                     bomber_plant_outgoing.data.planted = true;
 
-                    for (bomb &b : bombs)
+                    for (bomb &other_bomb : bombs)
                     {
-                        if (b.position.x == b.position.x && b.position.y == b.position.y)
+                        if (other_bomb.position.x == other_bomb.position.x && other_bomb.position.y == other_bomb.position.y)
                         {
                             bomber_plant_outgoing.data.planted = false;
                             break;
@@ -203,59 +213,59 @@ int main()
                     }
                     if (bomber_plant_outgoing.data.planted)
                     {
-                        bomb b;
-                        b.position = b.position;
-                        b.radius = incoming.data.bomb_info.radius;
-                        pipe(b.pipe);
+                        bomb new_bomb;
+                        new_bomb.position = new_bomb.position;
+                        new_bomb.radius = incoming.data.bomb_info.radius;
+                        PIPE(new_bomb.pipe);
                         pid_t pid = fork();
                         if (pid == 0)
                         {
-                            dup2(b.pipe[0], STDIN_FILENO);
-                            dup2(b.pipe[1], STDOUT_FILENO);
+                            dup2(new_bomb.pipe[1], STDIN_FILENO);
+                            dup2(new_bomb.pipe[1], STDOUT_FILENO);
+                            close(new_bomb.pipe[0]);
                             char *args[3] = {"bomb", NULL, NULL};
                             args[1] = new char[256];
                             sprintf(args[1], "%ld", incoming.data.bomb_info.interval);
                             execvp("bomb", args);
                         }
-                        b.pid = pid;
-                        bombs.push_back(b);
+                        new_bomb.pid = pid;
+                        bombs.push_back(new_bomb);
                     }
                     // write(b.pipe[1], &bomber_plant_outgoing, sizeof(omd));
-                    write_outgoing_message(b.pipe[1], b.pid, bomber_plant_outgoing);
+                    write_outgoing_message(ready_bomber.pipe[0], ready_bomber.pid, bomber_plant_outgoing);
                     break;
                 case BOMBER_SEE:
-                    vector<od> outgoing_data;
+                    vector<object_data> outgoing_data;
                     for (obsd &obstacle : obstacles)
                     {
-                        if (distance(b.position, obstacle.position) <= 3)
+                        if (distance(ready_bomber.position, obstacle.position) <= 3)
                         {
 
-                            od o;
-                            o.type = OBSTACLE;
-                            o.position = obstacle.position;
-                            outgoing_data.push_back(o);
+                            object_data obstacle_data;
+                            obstacle_data.type = OBSTACLE;
+                            obstacle_data.position = obstacle.position;
+                            outgoing_data.push_back(obstacle_data);
                         }
                     }
-                    for (bomber &b : bombers)
+                    for (bomber &other_bomber : bombers)
                     {
-                        if (distance(b.position, b.position) <= 3)
+                        if (&other_bomber != &ready_bomber && distance(ready_bomber.position, other_bomber.position) <= 3)
                         {
-
-                            od o;
-                            o.type = BOMBER;
-                            o.position = b.position;
-                            outgoing_data.push_back(o);
+                            object_data bomber_data;
+                            bomber_data.type = BOMBER;
+                            bomber_data.position = other_bomber.position;
+                            outgoing_data.push_back(bomber_data);
                         }
                     }
                     for (bomb &bomb : bombs)
                     {
-                        if (distance(b.position, bomb.position) <= 3)
+                        if (distance(ready_bomber.position, bomb.position) <= 3)
                         {
 
-                            od o;
-                            o.type = BOMB;
-                            o.position = bomb.position;
-                            outgoing_data.push_back(o);
+                            object_data bomb_data;
+                            bomb_data.type = BOMB;
+                            bomb_data.position = bomb.position;
+                            outgoing_data.push_back(bomb_data);
                         }
                     }
 
@@ -263,15 +273,15 @@ int main()
                     outgoing_object_count_message.type = BOMBER_VISION;
                     outgoing_object_count_message.data.object_count = outgoing_data.size();
                     omp out;
-                    out.pid = b.pid;
+                    out.pid = ready_bomber.pid;
                     out.m = &outgoing_object_count_message;
-                    write(b.pipe[1], &outgoing_object_count_message, sizeof(omd));
+                    write(ready_bomber.pipe[0], &outgoing_object_count_message, sizeof(omd));
 
                     omp outgoing_object_count_message_print;
-                    outgoing_object_count_message_print.pid = b.pid;
+                    outgoing_object_count_message_print.pid = ready_bomber.pid;
                     outgoing_object_count_message_print.m = &outgoing_object_count_message;
                     unsigned index = 0;
-                    send_object_data(b.pipe[1], outgoing_data.size(), &*outgoing_data.begin());
+                    send_object_data(ready_bomber.pipe[0], outgoing_data.size(), &*outgoing_data.begin());
                     print_output(NULL, &outgoing_object_count_message_print, NULL, &*outgoing_data.begin());
                     break;
                 }
@@ -279,16 +289,16 @@ int main()
         }
         for (auto bomb_it = bombs.begin(); bomb_it != bombs.end(); bomb_it++)
         {
-            bomb &b = *bomb_it;
-            if (FD_ISSET(b.pipe[0], &readfds))
+            bomb &ready_bomb = *bomb_it;
+            if (FD_ISSET(ready_bomb.pipe[0], &readfds))
             {
-                im incoming = read_message(b.pipe[0], b.pid);
+                im incoming = read_message(ready_bomb.pipe[0], ready_bomb.pid);
                 // type is always BOMB_EXPLODE
 
                 for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
                 {
                     obsd &obstacle = *obstacle_it;
-                    if (distance(obstacle.position, b.position) <= b.radius)
+                    if (distance(obstacle.position, ready_bomb.position) <= ready_bomb.radius)
                     {
                         if (obstacle.remaining_durability != -1)
                         {
@@ -296,19 +306,26 @@ int main()
                                 obstacles.erase(obstacles.begin());
                         }
                     }
-                    write(b.pipe[1], &obstacle, sizeof(obsd));
+                    write(ready_bomb.pipe[0], &obstacle, sizeof(obsd));
                     print_output(NULL, NULL, &obstacle, NULL);
                 }
 
                 for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
                 {
-                    bomber &bomber = *bomber_it;
-                    if (distance(bomber.position, b.position) <= b.radius)
+                    bomber &bomber_in_range = *bomber_it;
+                    if (distance(bomber_in_range.position, ready_bomb.position) <= ready_bomb.radius)
                     {
                         om bomber_death_message;
                         bomber_death_message.type = BOMBER_DIE;
-                        write_outgoing_message(bomber.pipe[1], bomber.pid, bomber_death_message);
+                        write_outgoing_message(bomber_in_range.pipe[0], bomber_in_range.pid, bomber_death_message);
                         bombers.erase(bomber_it);
+                        if (bombers.size() == 1)
+                        {
+                            om winner_message;
+                            winner_message.type = BOMBER_WIN;
+                            write_outgoing_message(bombers.front().pipe[0], bombers.front().pid, winner_message);
+                            return 0;
+                        }
                     }
                 }
                 bombs.erase(bomb_it);
