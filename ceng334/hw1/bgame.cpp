@@ -35,20 +35,20 @@ im read_message(int fd, pid_t pid)
 {
     im message;
     read(fd, &message, sizeof(im));
-    imp in;
-    in.pid = pid;
-    in.m = &message;
-    print_output(&in, NULL, NULL, NULL);
+    imp print_message;
+    print_message.pid = pid;
+    print_message.m = &message;
+    print_output(&print_message, NULL, NULL, NULL);
     return message;
 }
 
 void write_outgoing_message(int fd, pid_t pid, om &message)
 {
-    omp out;
-    out.pid = pid;
-    out.m = &message;
+    omp print_message;
+    print_message.pid = pid;
+    print_message.m = &message;
     write(fd, &message, sizeof(om));
-    print_output(NULL, &out, NULL, NULL);
+    print_output(NULL, &print_message, NULL, NULL);
 }
 
 typedef struct
