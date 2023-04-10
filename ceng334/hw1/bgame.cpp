@@ -5,7 +5,6 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <list>
-#include <vector>
 
 using namespace std;
 
@@ -235,7 +234,7 @@ int main()
                     write_outgoing_message(ready_bomber.pipe[0], ready_bomber.pid, bomber_plant_outgoing);
                     break;
                 case BOMBER_SEE:
-                    vector<object_data> outgoing_data;
+                    object_data outgoing_data[25];
                     for (obsd &obstacle : obstacles)
                     {
                         if (distance(ready_bomber.position, obstacle.position) <= 3)
