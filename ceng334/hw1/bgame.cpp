@@ -202,7 +202,7 @@ int main()
                     }
 
                     // Check if the bomber is trying to move out of the map
-                    if (incoming.data.target_position.x < 0 || incoming.data.target_position.x >= map_width || incoming.data.target_position.y < 0 || incoming.data.target_position.y >= map_height)
+                    if (incoming.data.target_position.x >= map_width || incoming.data.target_position.y >= map_height)
                     {
                         goto case_bomber_move_exit;
                     }
@@ -311,15 +311,12 @@ int main()
                     om outgoing_object_count_message;
                     outgoing_object_count_message.type = BOMBER_VISION;
                     outgoing_object_count_message.data.object_count = object_count;
-                    omp out;
-                    out.pid = ready_bomber.get_pid();
-                    out.m = &outgoing_object_count_message;
+
                     ready_bomber.write_message(outgoing_object_count_message);
 
                     omp outgoing_object_count_message_print;
                     outgoing_object_count_message_print.pid = ready_bomber.get_pid();
                     outgoing_object_count_message_print.m = &outgoing_object_count_message;
-                    unsigned index = 0;
                     send_object_data(ready_bomber.get_fd(), object_count, outgoing_data);
                     print_output(NULL, &outgoing_object_count_message_print, NULL, outgoing_data);
                     break;
@@ -336,7 +333,7 @@ int main()
             if (FD_ISSET(bomb_it->get_fd(), &readfds))
             {
                 bomb &ready_bomb = *bomb_it;
-                im incoming = ready_bomb.read_message();
+                ready_bomb.read_message();
                 // type is always BOMB_EXPLODE
 
                 for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
