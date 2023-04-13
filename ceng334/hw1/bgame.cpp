@@ -232,13 +232,11 @@ int main()
                         bomb &new_bomb = bombs.back();
                         new_bomb.position = ready_bomber.position;
                         new_bomb.radius = incoming.data.bomb_info.radius;
-                        char *args[4] = {BOMB_DIR, new char[MAX_ARG_SIZE], new char[MAX_ARG_SIZE], NULL};
+                        char *args[3] = {BOMB_DIR, new char[MAX_ARG_SIZE], NULL};
                         sprintf(args[1], "%ld", incoming.data.bomb_info.interval);
-                        sprintf(args[2], "%u", incoming.data.bomb_info.radius);
                         args[2] = NULL;
                         new_bomb.create_process(args);
                         delete[] args[1];
-                        delete[] args[2];
                     }
                     ready_bomber.write_outgoing_message(bomber_plant_outgoing);
                     break;
