@@ -345,12 +345,15 @@ int main()
                     {
                         if (obstacle.remaining_durability != -1)
                         {
-                            if (--obstacle.remaining_durability == 0)
-                                obstacles.erase(obstacles.begin());
+                            obstacle.remaining_durability--;
                         }
                     }
                     write(ready_bomb.get_fd(), &obstacle, sizeof(obsd));
                     print_output(NULL, NULL, &obstacle, NULL);
+                    if (obstacle.remaining_durability == 0)
+                    {
+                        obstacles.erase(obstacle_it);
+                    }
                 }
 
                 for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
