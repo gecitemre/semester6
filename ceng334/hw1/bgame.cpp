@@ -142,7 +142,7 @@ int main()
         new_bomber.create_process(args);
         for (unsigned j = 0; j < total_argument_count; j++)
         {
-            delete[] args[j];
+            delete[] argsl[j];
         }
     }
 

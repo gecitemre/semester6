@@ -1,13 +1,12 @@
 SRCS = bgame.cpp logging.c logging.h message.c message.h
+TARFILE = e2521581.tar.gz
 
 bgame: $(SRCS)
 	g++ $(SRCS) -o bgame
 
 tar: $(SRCS) Makefile
-	tar -cf e2521581.tar.gz bgame.cpp Makefile
-	@echo shell($?)
+	tar -cf $(TARFILE) bgame.cpp Makefile
 
-test: tar
-	tar -xf e2521581.tar.gz
-	g++ $(SRCS) -o bgame
-	@echo "Last command $(.SHELLSTATUS)"
+test: tar bgame
+	tar -xf $(TARFILE)
+	./bgame
