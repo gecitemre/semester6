@@ -6,7 +6,7 @@ bgame: $(SRCS)
 	g++ $(SRCS) -o bgame
 
 tar: $(SRCS) Makefile
-	tar -cf $(TARFILE) bgame.cpp Makefile
+	tar -czvf $(TARFILE) bgame.cpp Makefile
 
 test: tar
 	tar -xf $(TARFILE)
