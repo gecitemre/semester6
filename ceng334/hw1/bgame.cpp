@@ -85,7 +85,7 @@ public:
         return pid;
     }
 
-        bool operator==(const game_entity &other) const
+    bool operator==(const game_entity &other) const
     {
         return position.x == other.position.x && position.y == other.position.y;
     }
@@ -93,6 +93,7 @@ public:
 
 struct bomber : public game_entity
 {
+    bool alive = true;
     void win()
     {
         om message;
@@ -117,7 +118,8 @@ struct obstacle
 {
     coordinate position;
     int remaining_durability;
-    operator obsd() {
+    operator obsd()
+    {
         return obsd{position, remaining_durability};
     }
     bool operator==(const obstacle &other) const
@@ -184,10 +186,20 @@ int main()
             perror("select");
             exit(1);
         }
-        for (bomber &ready_bomber : bombers)
+        for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
         {
+            bomber &ready_bomber = *bomber_it;
             if (FD_ISSET(ready_bomber.get_fd(), &readfds))
             {
+                if (!ready_bomber.alive)
+                {
+                    om death_message;
+                    death_message.type = BOMBER_DIE;
+                    ready_bomber.write_outgoing_message(death_message);
+                    bombers.erase(bomber_it--);
+                    bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
+                    continue;
+                }
                 im incoming = ready_bomber.read_message();
                 switch (incoming.type)
                 {
@@ -275,56 +287,44 @@ int main()
                         bombs_grid[bomb.position.x][bomb.position.y] = &bomb;
                     }
 
+#define test_vision(offset_x, offset_y, direction)                                     \
+    if (!flag[direction])                                                              \
+    {                                                                                  \
+        int x = ready_bomber.position.x + offset_x;                                    \
+        int y = ready_bomber.position.y + offset_y;                                    \
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)                       \
+        {                                                                              \
+            if (!(offset_x == 0 && offset_y == 0) && bombers_grid[x][y] != NULL)       \
+            {                                                                          \
+                outgoing_data[object_count].type = BOMBER;                             \
+                outgoing_data[object_count].position = bombers_grid[x][y]->position;   \
+                object_count++;                                                        \
+            }                                                                          \
+            else if (bombs_grid[x][y] != NULL)                                         \
+            {                                                                          \
+                outgoing_data[object_count].type = BOMB;                               \
+                outgoing_data[object_count].position = bombs_grid[x][y]->position;     \
+                object_count++;                                                        \
+            }                                                                          \
+            else if (obstacles_grid[x][y] != NULL)                                     \
+            {                                                                          \
+                outgoing_data[object_count].type = OBSTACLE;                           \
+                outgoing_data[object_count].position = obstacles_grid[x][y]->position; \
+                object_count++;                                                        \
+                flag[direction] = true;                                                \
+            }                                                                          \
+        }                                                                              \
+    }
+                    bool flag[5] = {};
                     object_data outgoing_data[25];
                     unsigned object_count = 0;
+                    test_vision(0, 0, 4)
 
-#define test_vision(offset_x, offset_y)                                            \
-    int x = ready_bomber.position.x + offset_x;                                    \
-    int y = ready_bomber.position.y + offset_y;                                    \
-    if (x >= 0 && x < map_width && y >= 0 && y < map_height)                       \
-    {                                                                              \
-        if (!(offset_x == 0 && offset_y == 0) && bombers_grid[x][y] != NULL)       \
-        {                                                                          \
-            outgoing_data[object_count].type = BOMBER;                             \
-            outgoing_data[object_count].position = bombers_grid[x][y]->position;   \
-            object_count++;                                                        \
-        }                                                                          \
-        else if (bombs_grid[x][y] != NULL)                                         \
-        {                                                                          \
-            outgoing_data[object_count].type = BOMB;                               \
-            outgoing_data[object_count].position = bombs_grid[x][y]->position;     \
-            object_count++;                                                        \
-        }                                                                          \
-        else if (obstacles_grid[x][y] != NULL)                                     \
-        {                                                                          \
-            outgoing_data[object_count].type = OBSTACLE;                           \
-            outgoing_data[object_count].position = obstacles_grid[x][y]->position; \
-            object_count++;                                                        \
-            break;                                                                 \
-        }                                                                          \
-    }
-
-                    test_vision(0, 0)
-
-                        for (int offset_x = -1; offset_x >= -3; offset_x--)
-                    {
-                        test_vision(offset_x, 0)
-                    }
-
-                    for (int offset_x = 1; offset_x <= 3; offset_x++)
-                    {
-                        test_vision(offset_x, 0)
-                    }
-
-                    for (int offset_y = -1; offset_y >= -3; offset_y--)
-                    {
-                        test_vision(0, offset_y)
-                    }
-
-                    for (int offset_y = 1; offset_y <= 3; offset_y++)
-                    {
-                        test_vision(0, offset_y)
-                    }
+                        if (!flag[4]) for (int offset = 1; offset < 3; offset++){
+                            test_vision(0, offset, 0)
+                                test_vision(0, -offset, 1)
+                                    test_vision(offset, 0, 2)
+                                        test_vision(-offset, 0, 3)}
 
                     om outgoing_object_count_message;
                     outgoing_object_count_message.type = BOMBER_VISION;
@@ -341,55 +341,13 @@ int main()
                 }
             }
         }
-        if (bombers.size() == 1)
-        {
-            bombers.front().win();
-            return 0;
-        }
+
         for (auto bomb_it = bombs.begin(); bomb_it != bombs.end(); bomb_it++)
         {
             if (FD_ISSET(bomb_it->get_fd(), &readfds))
             {
                 bomb &ready_bomb = *bomb_it;
                 ready_bomb.read_message();
-                // type is always BOMB_EXPLODE
-
-                // for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
-                // {
-                //     obstacle &obstacle = *obstacle_it;
-                //     if (distance(obstacle.position, ready_bomb.position) <= ready_bomb.radius &&
-                //         obstacle.position.x == ready_bomb.position.x &&
-                //         obstacle.position.y == ready_bomb.position.y)
-                //     {
-                //         if (obstacle.remaining_durability != -1)
-                //         {
-                //             obstacle.remaining_durability--;
-                //         }
-                //     }
-                //     write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle));
-                //     print_output(NULL, NULL, &obstacle, NULL);
-                //     if (obstacle.remaining_durability == 0)
-                //     {
-                //         obstacles.erase(obstacle_it);
-                //     }
-                // }
-
-                // for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
-                // {
-                //     if (distance(bomber_it->position, ready_bomb.position) <= ready_bomb.radius)
-                //     {
-                //         bomber &bomber_in_range = *bomber_it;
-                //         om bomber_death_message;
-                //         bomber_death_message.type = BOMBER_DIE;
-                //         bomber_in_range.write_outgoing_message(bomber_death_message);
-                //         bombers.erase(bomber_it);
-                //         if (bombers.size() == 1)
-                //         {
-                //             bombers.front().win();
-                //             return 0;
-                //         }
-                //     }
-                // }
 
                 memset(obstacles_grid, 0, sizeof(obstacles_grid));
                 for (obstacle &obstacle : obstacles)
@@ -402,60 +360,59 @@ int main()
                     bombers_grid[bomber.position.x][bomber.position.y] = &bomber;
                 }
 
-#define test_explosion(offset_x, offset_y)                                         \
-    int x = ready_bomb.position.x + offset_x;                                      \
-    int y = ready_bomb.position.y + offset_y;                                      \
-    if (x >= 0 && x < map_width && y >= 0 && y < map_height)                       \
-    {                                                                              \
-        if (obstacles_grid[x][y] != NULL)                                          \
-        {                                                                          \
-            obstacle &obstacle = *obstacles_grid[x][y];                                \
-            if (obstacle.remaining_durability != -1)                               \
-            {                                                                      \
-                obstacle.remaining_durability--;                                   \
-            }                                                                      \
-            write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle));                   \
-            obsd outgoing(obstacle);                                               \
-            print_output(NULL, NULL, &outgoing, NULL);                             \
-            if (obstacle.remaining_durability == 0)                                \
-            {   \
-                obstacles.remove(obstacle);                                       \
-            }                                                                      \
-        }                                                                          \
-        else if (bombers_grid[x][y] != NULL)                                       \
-        {                                                                          \
-            bomber &bomber_in_range = *bombers_grid[x][y];                         \
-            om bomber_death_message;                                               \
-            bomber_death_message.type = BOMBER_DIE;                                \
-            bomber_in_range.write_outgoing_message(bomber_death_message);          \
-            bombers.remove(bomber_in_range);                                       \
-            if (bombers.size() == 1)                                               \
-            {                                                                      \
-                bombers.front().win();                                             \
-                return 0;                                                          \
-            }                                                                      \
-        }                                                                          \
+#define test_explosion(offset_x, offset_y, direction)                    \
+    if (!flag[direction])                                                \
+    {                                                                    \
+        int x = ready_bomb.position.x + offset_x;                        \
+        int y = ready_bomb.position.y + offset_y;                        \
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)         \
+        {                                                                \
+            if (obstacles_grid[x][y] != NULL)                            \
+            {                                                            \
+                obstacle &obstacle = *obstacles_grid[x][y];              \
+                if (obstacle.remaining_durability != -1)                 \
+                {                                                        \
+                    obstacle.remaining_durability--;                     \
+                }                                                        \
+                write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle)); \
+                obsd outgoing(obstacle);                                 \
+                print_output(NULL, NULL, &outgoing, NULL);               \
+                if (obstacle.remaining_durability == 0)                  \
+                {                                                        \
+                    obstacles.remove(obstacle);                          \
+                    obstacles_grid[x][y] = NULL;                         \
+                }                                                        \
+            }                                                            \
+            else if (bombers_grid[x][y] != NULL)                         \
+            {                                                            \
+                bomber &bomber_in_range = *bombers_grid[x][y];           \
+                bomber_in_range.alive = false;                           \
+            }                                                            \
+        }                                                                \
     }
-                test_explosion(0, 0);
-                for (int offset_x = 1; offset_x <= ready_bomb.radius; offset_x++)
-                {
-                    test_explosion(offset_x, 0)
-                }
-                for (int offset_x = -1; offset_x >= -ready_bomb.radius; offset_x--)
-                {
-                    test_explosion(offset_x, 0)
-                }
-                for (int offset_y = 1; offset_y <= ready_bomb.radius; offset_y++)
-                {
-                    test_explosion(0, offset_y)
-                }
-                for (int offset_y = -1; offset_y >= -ready_bomb.radius; offset_y--)
-                {
-                    test_explosion(0, offset_y)
-                }
+                bool flag[5] = {};
 
-                bombs.erase(bomb_it);
+                test_explosion(0, 0, 4)
+                
+                if (!flag[4]) for (int offset = 1; offset <= ready_bomb.radius; offset++)
+                {
+                    test_explosion(offset, 0, 0);
+                    test_explosion(-offset, 0, 1);
+                    test_explosion(0, offset, 2);
+                    test_explosion(0, -offset, 3);
+                }
+                bombs.erase(bomb_it--);
+                bombs_grid[ready_bomb.position.x][ready_bomb.position.y] = NULL;
             }
+        }
+        if (bombers.size() == 1)
+        {
+            bombers.front().win();
+            bombers.clear();
+        }
+        if (bombers.empty() && bombs.empty())
+        {
+            return 0;
         }
     }
 }

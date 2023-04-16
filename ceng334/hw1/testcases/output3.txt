@@ -1,0 +1,96 @@
+IN pid:2280 mid:0 bomber start.
+OUT pid:2280 mid:0 bomber new location:(0, 29).
+IN pid:2281 mid:0 bomber start.
+OUT pid:2281 mid:0 bomber new location:(29, 0).
+IN pid:2278 mid:0 bomber start.
+OUT pid:2278 mid:0 bomber new location:(0, 0).
+IN pid:2280 mid:1 bomber see.
+OUT pid:2280 mid:1 bomber vision object count:0.
+IN pid:2281 mid:1 bomber see.
+OUT pid:2281 mid:1 bomber vision object count:0.
+IN pid:2278 mid:1 bomber see.
+OUT pid:2278 mid:1 bomber vision object count:0.
+IN pid:2279 mid:0 bomber start.
+OUT pid:2279 mid:0 bomber new location:(29, 29).
+IN pid:2279 mid:1 bomber see.
+OUT pid:2279 mid:1 bomber vision object count:0.
+IN pid:2280 mid:2 bomber move target:(1, 29).
+OUT pid:2280 mid:0 bomber new location:(1, 29).
+IN pid:2281 mid:2 bomber move target:(28, 0).
+OUT pid:2281 mid:0 bomber new location:(28, 0).
+IN pid:2278 mid:2 bomber move target:(1, 0).
+OUT pid:2278 mid:0 bomber new location:(1, 0).
+IN pid:2279 mid:2 bomber move target:(28, 29).
+OUT pid:2279 mid:0 bomber new location:(28, 29).
+IN pid:2280 mid:2 bomber move target:(2, 29).
+OUT pid:2280 mid:0 bomber new location:(2, 29).
+IN pid:2281 mid:2 bomber move target:(27, 0).
+OUT pid:2281 mid:0 bomber new location:(27, 0).
+IN pid:2278 mid:2 bomber move target:(2, 0).
+OUT pid:2278 mid:0 bomber new location:(2, 0).
+IN pid:2279 mid:2 bomber move target:(27, 29).
+OUT pid:2279 mid:0 bomber new location:(27, 29).
+IN pid:2280 mid:2 bomber move target:(3, 29).
+OUT pid:2280 mid:0 bomber new location:(3, 29).
+IN pid:2281 mid:2 bomber move target:(26, 0).
+OUT pid:2281 mid:0 bomber new location:(26, 0).
+IN pid:2278 mid:2 bomber move target:(3, 0).
+OUT pid:2278 mid:0 bomber new location:(3, 0).
+IN pid:2279 mid:2 bomber move target:(26, 29).
+OUT pid:2279 mid:0 bomber new location:(26, 29).
+IN pid:2280 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2280 mid:2 bomber plant bomb result:1.
+IN pid:2281 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2281 mid:2 bomber plant bomb result:1.
+IN pid:2278 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2278 mid:2 bomber plant bomb result:1.
+IN pid:2279 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2279 mid:2 bomber plant bomb result:1.
+IN pid:2280 mid:1 bomber see.
+OUT pid:2280 mid:1 bomber vision object count:1.
+object1 position:(3,29) type:1.
+IN pid:2281 mid:1 bomber see.
+OUT pid:2281 mid:1 bomber vision object count:1.
+object1 position:(26,0) type:1.
+IN pid:2278 mid:1 bomber see.
+OUT pid:2278 mid:1 bomber vision object count:1.
+object1 position:(3,0) type:1.
+IN pid:2279 mid:1 bomber see.
+OUT pid:2279 mid:1 bomber vision object count:1.
+object1 position:(26,29) type:1.
+IN pid:2280 mid:2 bomber move target:(4, 29).
+OUT pid:2280 mid:0 bomber new location:(4, 29).
+IN pid:2281 mid:2 bomber move target:(26, 1).
+OUT pid:2281 mid:0 bomber new location:(26, 1).
+IN pid:2278 mid:2 bomber move target:(3, 1).
+OUT pid:2278 mid:0 bomber new location:(3, 1).
+IN pid:2279 mid:2 bomber move target:(27, 29).
+OUT pid:2279 mid:0 bomber new location:(27, 29).
+IN pid:2280 mid:2 bomber move target:(5, 29).
+OUT pid:2280 mid:0 bomber new location:(5, 29).
+IN pid:2281 mid:2 bomber move target:(26, 2).
+OUT pid:2281 mid:0 bomber new location:(26, 2).
+IN pid:2278 mid:2 bomber move target:(3, 2).
+OUT pid:2278 mid:0 bomber new location:(3, 2).
+IN pid:2279 mid:2 bomber move target:(28, 29).
+OUT pid:2279 mid:0 bomber new location:(28, 29).
+IN pid:2280 mid:2 bomber move target:(6, 29).
+OUT pid:2280 mid:0 bomber new location:(6, 29).
+IN pid:2281 mid:2 bomber move target:(26, 3).
+OUT pid:2281 mid:0 bomber new location:(26, 3).
+IN pid:2278 mid:2 bomber move target:(3, 3).
+OUT pid:2278 mid:0 bomber new location:(3, 3).
+IN pid:2279 mid:2 bomber move target:(29, 29).
+OUT pid:2279 mid:0 bomber new location:(29, 29).
+IN pid:2282 mid:4 bomb explode.
+IN pid:2283 mid:4 bomb explode.
+IN pid:2284 mid:4 bomb explode.
+IN pid:2285 mid:4 bomb explode.
+IN pid:2280 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2280 mid:3 bomber died.
+IN pid:2281 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2281 mid:3 bomber died.
+IN pid:2278 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2278 mid:3 bomber died.
+IN pid:2279 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2279 mid:4 bomber wins.
