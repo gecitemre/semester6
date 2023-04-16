@@ -199,14 +199,15 @@ int main()
                     om death_message;
                     death_message.type = BOMBER_DIE;
                     ready_bomber.write_outgoing_message(death_message);
-                    bombers.erase(bomber_it--);
                     bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
+                    bombers.erase(bomber_it--);
                     continue;
                 }
                 else if (ready_bomber.won)
                 {
                     ready_bomber.win();
-                    return 0;
+                    bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
+                    bombers.erase(bomber_it--);
                 }
                 switch (incoming.type)
                 {
@@ -427,9 +428,14 @@ int main()
                     test_explosion(0, offset, 2);
                     test_explosion(0, -offset, 3);
                 }
-                bombs.erase(bomb_it--);
                 bombs_grid[ready_bomb.position.x][ready_bomb.position.y] = NULL;
+                bombs.erase(bomb_it--);
             }
+        }
+
+        if (bombers.size() == 0 && bombs.size() == 0)
+        {
+            return 0;
         }
     }
 }
