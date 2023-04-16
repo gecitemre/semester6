@@ -408,10 +408,6 @@ int main()
         if (bombers.size() == 1)
         {
             bombers.front().win();
-            bombers.clear();
-        }
-        if (bombers.empty() && bombs.empty())
-        {
             return 0;
         }
     }
