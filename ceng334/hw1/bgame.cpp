@@ -193,6 +193,7 @@ int main()
             bomber &ready_bomber = *bomber_it;
             if (FD_ISSET(ready_bomber.get_fd(), &readfds))
             {
+                im incoming = ready_bomber.read_message();
                 if (!ready_bomber.alive && !ready_bomber.won)
                 {
                     om death_message;
@@ -202,7 +203,11 @@ int main()
                     bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
                     continue;
                 }
-                im incoming = ready_bomber.read_message();
+                else if (ready_bomber.won)
+                {
+                    ready_bomber.win();
+                    return 0;
+                }
                 switch (incoming.type)
                 {
                 case BOMBER_START:
@@ -403,7 +408,7 @@ int main()
                     {                                                    \
                         if (bomber.alive && !bomber.won)                 \
                         {                                                \
-                            bomber.win();                                \
+                            bomber.won = true ;                              \
                         }                                                \
                     }                                                    \
                 }                                                        \
