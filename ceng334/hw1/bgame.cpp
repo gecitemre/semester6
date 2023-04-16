@@ -393,9 +393,8 @@ int main()
             else if (bombers_grid[x][y] != NULL)                         \
             {                                                            \
                 bomber &bomber_in_range = *bombers_grid[x][y];           \
-                bomber_in_range.alive = false;                           \
                 int alive_count = 0;                                     \
-                for (bomber &bomber : bombers)                           \
+                for (bomber & bomber : bombers)                          \
                 {                                                        \
                     if (bomber.alive)                                    \
                     {                                                    \
@@ -404,22 +403,24 @@ int main()
                 }                                                        \
                 if (alive_count == 1)                                    \
                 {                                                        \
-                    for (bomber &bomber : bombers)                       \
+                    for (bomber & bomber : bombers)                      \
                     {                                                    \
                         if (bomber.alive && !bomber.won)                 \
                         {                                                \
-                            bomber.won = true ;                              \
+                            bomber.won = true;                           \
                         }                                                \
                     }                                                    \
                 }                                                        \
+                if (!bomber_in_range.won)                                \
+                    bomber_in_range.alive = false;                       \
             }                                                            \
         }                                                                \
     }
                 bool flag[5] = {};
 
                 test_explosion(0, 0, 4)
-                
-                if (!flag[4]) for (int offset = 1; offset <= ready_bomb.radius; offset++)
+
+                    if (!flag[4]) for (int offset = 1; offset <= ready_bomb.radius; offset++)
                 {
                     test_explosion(offset, 0, 0);
                     test_explosion(-offset, 0, 1);
@@ -429,9 +430,6 @@ int main()
                 bombs.erase(bomb_it--);
                 bombs_grid[ready_bomb.position.x][ready_bomb.position.y] = NULL;
             }
-        }
-        if (bombers.size() == 1) {
-            return 0;
         }
     }
 }
