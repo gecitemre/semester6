@@ -84,6 +84,11 @@ public:
     {
         return pid;
     }
+
+        bool operator==(const game_entity &other) const
+    {
+        return position.x == other.position.x && position.y == other.position.y;
+    }
 };
 
 struct bomber : public game_entity
@@ -108,20 +113,33 @@ struct bomb : public game_entity
     unsigned radius;
 };
 
+struct obstacle
+{
+    coordinate position;
+    int remaining_durability;
+    operator obsd() {
+        return obsd{position, remaining_durability};
+    }
+    bool operator==(const obstacle &other) const
+    {
+        return position.x == other.position.x && position.y == other.position.y;
+    }
+};
+
 int main()
 {
     list<bomber> bombers;
     list<bomb> bombs;
-    list<obsd> obstacles;
+    list<obstacle> obstacles;
     unsigned map_width, map_height, obstacle_count, bomber_count;
     cin >> map_width >> map_height >> obstacle_count >> bomber_count;
     bomber *bombers_grid[map_width][map_height];
-    obsd *obstacles_grid[map_width][map_height];
+    obstacle *obstacles_grid[map_width][map_height];
     bomb *bombs_grid[map_width][map_height];
     for (unsigned i = 0; i < obstacle_count; i++)
     {
-        obstacles.push_back(obsd());
-        obsd &obstacle = obstacles.back();
+        obstacles.push_back(obstacle());
+        obstacle &obstacle = obstacles.back();
         cin >> obstacle.position.x >> obstacle.position.y >> obstacle.remaining_durability;
     }
 
@@ -183,7 +201,7 @@ int main()
                         goto case_bomber_move_exit;
                     }
 
-                    for (obsd &obstacle : obstacles)
+                    for (obstacle &obstacle : obstacles)
                     {
                         // Check if the bomber is trying to move into an obstacle
                         if (obstacle.position.x == incoming.data.target_position.x && obstacle.position.y == incoming.data.target_position.y)
@@ -242,7 +260,7 @@ int main()
                     break;
                 case BOMBER_SEE:
                     memset(obstacles_grid, 0, sizeof(obstacles_grid));
-                    for (obsd &obstacle : obstacles)
+                    for (obstacle &obstacle : obstacles)
                     {
                         obstacles_grid[obstacle.position.x][obstacle.position.y] = &obstacle;
                     }
@@ -336,42 +354,106 @@ int main()
                 ready_bomb.read_message();
                 // type is always BOMB_EXPLODE
 
-                for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
+                // for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
+                // {
+                //     obstacle &obstacle = *obstacle_it;
+                //     if (distance(obstacle.position, ready_bomb.position) <= ready_bomb.radius &&
+                //         obstacle.position.x == ready_bomb.position.x &&
+                //         obstacle.position.y == ready_bomb.position.y)
+                //     {
+                //         if (obstacle.remaining_durability != -1)
+                //         {
+                //             obstacle.remaining_durability--;
+                //         }
+                //     }
+                //     write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle));
+                //     print_output(NULL, NULL, &obstacle, NULL);
+                //     if (obstacle.remaining_durability == 0)
+                //     {
+                //         obstacles.erase(obstacle_it);
+                //     }
+                // }
+
+                // for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
+                // {
+                //     if (distance(bomber_it->position, ready_bomb.position) <= ready_bomb.radius)
+                //     {
+                //         bomber &bomber_in_range = *bomber_it;
+                //         om bomber_death_message;
+                //         bomber_death_message.type = BOMBER_DIE;
+                //         bomber_in_range.write_outgoing_message(bomber_death_message);
+                //         bombers.erase(bomber_it);
+                //         if (bombers.size() == 1)
+                //         {
+                //             bombers.front().win();
+                //             return 0;
+                //         }
+                //     }
+                // }
+
+                memset(obstacles_grid, 0, sizeof(obstacles_grid));
+                for (obstacle &obstacle : obstacles)
                 {
-                    obsd &obstacle = *obstacle_it;
-                    if (distance(obstacle.position, ready_bomb.position) <= ready_bomb.radius &&
-                        obstacle.position.x == ready_bomb.position.x &&
-                        obstacle.position.y == ready_bomb.position.y)
-                    {
-                        if (obstacle.remaining_durability != -1)
-                        {
-                            obstacle.remaining_durability--;
-                        }
-                    }
-                    write(ready_bomb.get_fd(), &obstacle, sizeof(obsd));
-                    print_output(NULL, NULL, &obstacle, NULL);
-                    if (obstacle.remaining_durability == 0)
-                    {
-                        obstacles.erase(obstacle_it);
-                    }
+                    obstacles_grid[obstacle.position.x][obstacle.position.y] = &obstacle;
+                }
+                memset(bombers_grid, 0, sizeof(bombers_grid));
+                for (bomber &bomber : bombers)
+                {
+                    bombers_grid[bomber.position.x][bomber.position.y] = &bomber;
                 }
 
-                for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
+#define test_explosion(offset_x, offset_y)                                         \
+    int x = ready_bomb.position.x + offset_x;                                      \
+    int y = ready_bomb.position.y + offset_y;                                      \
+    if (x >= 0 && x < map_width && y >= 0 && y < map_height)                       \
+    {                                                                              \
+        if (obstacles_grid[x][y] != NULL)                                          \
+        {                                                                          \
+            obstacle &obstacle = *obstacles_grid[x][y];                                \
+            if (obstacle.remaining_durability != -1)                               \
+            {                                                                      \
+                obstacle.remaining_durability--;                                   \
+            }                                                                      \
+            write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle));                   \
+            obsd outgoing(obstacle);                                               \
+            print_output(NULL, NULL, &outgoing, NULL);                             \
+            if (obstacle.remaining_durability == 0)                                \
+            {   \
+                obstacles.remove(obstacle);                                       \
+            }                                                                      \
+        }                                                                          \
+        else if (bombers_grid[x][y] != NULL)                                       \
+        {                                                                          \
+            bomber &bomber_in_range = *bombers_grid[x][y];                         \
+            om bomber_death_message;                                               \
+            bomber_death_message.type = BOMBER_DIE;                                \
+            bomber_in_range.write_outgoing_message(bomber_death_message);          \
+            bombers.remove(bomber_in_range);                                       \
+            if (bombers.size() == 1)                                               \
+            {                                                                      \
+                bombers.front().win();                                             \
+                return 0;                                                          \
+            }                                                                      \
+        }                                                                          \
+    }
+                test_explosion(0, 0);
+                for (int offset_x = 1; offset_x <= ready_bomb.radius; offset_x++)
                 {
-                    if (distance(bomber_it->position, ready_bomb.position) <= ready_bomb.radius)
-                    {
-                        bomber &bomber_in_range = *bomber_it;
-                        om bomber_death_message;
-                        bomber_death_message.type = BOMBER_DIE;
-                        bomber_in_range.write_outgoing_message(bomber_death_message);
-                        bombers.erase(bomber_it);
-                        if (bombers.size() == 1)
-                        {
-                            bombers.front().win();
-                            return 0;
-                        }
-                    }
+                    test_explosion(offset_x, 0)
                 }
+                for (int offset_x = -1; offset_x >= -ready_bomb.radius; offset_x--)
+                {
+                    test_explosion(offset_x, 0)
+                }
+                for (int offset_y = 1; offset_y <= ready_bomb.radius; offset_y++)
+                {
+                    test_explosion(0, offset_y)
+                }
+                for (int offset_y = -1; offset_y >= -ready_bomb.radius; offset_y--)
+                {
+                    test_explosion(0, offset_y)
+                }
+
                 bombs.erase(bomb_it);
             }
         }
