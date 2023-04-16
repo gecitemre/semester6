@@ -94,11 +94,13 @@ public:
 struct bomber : public game_entity
 {
     bool alive = true;
+    bool won = false;
     void win()
     {
         om message;
         message.type = BOMBER_WIN;
         write_outgoing_message(message);
+        won = true;
     }
     void send_location()
     {
@@ -191,7 +193,7 @@ int main()
             bomber &ready_bomber = *bomber_it;
             if (FD_ISSET(ready_bomber.get_fd(), &readfds))
             {
-                if (!ready_bomber.alive)
+                if (!ready_bomber.alive && !ready_bomber.won)
                 {
                     om death_message;
                     death_message.type = BOMBER_DIE;
@@ -387,6 +389,24 @@ int main()
             {                                                            \
                 bomber &bomber_in_range = *bombers_grid[x][y];           \
                 bomber_in_range.alive = false;                           \
+                int alive_count = 0;                                     \
+                for (bomber &bomber : bombers)                           \
+                {                                                        \
+                    if (bomber.alive)                                    \
+                    {                                                    \
+                        alive_count++;                                   \
+                    }                                                    \
+                }                                                        \
+                if (alive_count == 1)                                    \
+                {                                                        \
+                    for (bomber &bomber : bombers)                       \
+                    {                                                    \
+                        if (bomber.alive && !bomber.won)                 \
+                        {                                                \
+                            bomber.win();                                \
+                        }                                                \
+                    }                                                    \
+                }                                                        \
             }                                                            \
         }                                                                \
     }
@@ -405,9 +425,7 @@ int main()
                 bombs_grid[ready_bomb.position.x][ready_bomb.position.y] = NULL;
             }
         }
-        if (bombers.size() == 1)
-        {
-            bombers.front().win();
+        if (bombers.size() == 1) {
             return 0;
         }
     }
