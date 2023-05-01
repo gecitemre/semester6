@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <pthread.h>
+#include <semaphore.h>
 #include "hw2_output.h"
 
 using namespace std;
 
 struct thread_args;
 
-int matrix_id;
+extern sem_t **semaphores[2];
 
 class matrix
 {
@@ -26,19 +27,15 @@ public:
             mat[i] = new int[cols];
         }
     }
-    static matrix from_stdin()
+    void fill_stdin()
     {
-        int rows, cols;
-        cin >> rows >> cols;
-        matrix m(rows, cols);
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < cols; j++)
             {
-                cin >> m.mat[i][j];
+                cin >> mat[i][j];
             }
         }
-        return m;
     }
     matrix operator+(matrix &other);
     matrix operator*(matrix &other);
@@ -54,12 +51,16 @@ public:
         }
         return os;
     }
+    static void add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr);
+    static void multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr);
 };
 
 struct thread_args
 {
-    int row, matrix_id;
     matrix *left, *right, *result;
+    int row, matrix_id;
+    thread_args() {}
+    thread_args(matrix *left, matrix *right, matrix *result, int row, int matrix_id) : left(left), right(right), result(result), row(row), matrix_id(matrix_id) {}
 };
 
 void *matrix::add_row(void *args)
@@ -74,55 +75,9 @@ void *matrix::add_row(void *args)
     {
         row_result[j] = row_left[j] + row_right[j];
         hw2_write_output(targs->matrix_id, row, j, row_result[j]);
+        sem_post(&semaphores[0][row][j]);
     }
     pthread_exit(NULL);
-}
-
-matrix matrix::operator+(matrix &other)
-{
-    pthread_t threads[rows];
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    matrix result(rows, cols);
-    thread_args args[rows];
-    for (int i = 0; i < rows; i++)
-    {
-        args[i].row = i;
-        args[i].left = this;
-        args[i].right = &other;
-        args[i].result = &result;
-        args[i].matrix_id = matrix_id;
-        pthread_create(&threads[i], &attr, add_row, (void *)&args[i]);
-    }
-    matrix_id++;
-    for (int i = 0; i < rows; i++)
-    {
-        pthread_join(threads[i], NULL);
-    }
-    return result;
-}
-
-matrix matrix::operator*(matrix &other) {
-    pthread_t threads[rows];
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    matrix result(rows, other.cols);
-    thread_args args[rows];
-    for (int i = 0; i < rows; i++)
-    {
-        args[i].row = i;
-        args[i].left = this;
-        args[i].right = &other;
-        args[i].result = &result;
-        args[i].matrix_id = matrix_id;
-        pthread_create(&threads[i], &attr, multiply_row, (void *)&args[i]);
-    }
-    matrix_id++;
-    for (int i = 0; i < rows; i++)
-    {
-        pthread_join(threads[i], NULL);
-    }
-    return result;
 }
 
 void *matrix::multiply_row(void *args)
@@ -137,12 +92,34 @@ void *matrix::multiply_row(void *args)
         int sum = 0;
         for (int k = 0; k < cols; k++)
         {
+            int sval;
+            sem_getvalue(&semaphores[0][targs->row][k], &sval);
+            if (sval == 0)
+            {
+                sem_wait(&semaphores[0][targs->row][k]);
+            }
             sum += row_left[k] * right->mat[k][j];
         }
         row_result[j] = sum;
         hw2_write_output(targs->matrix_id, targs->row, j, sum);
     }
     pthread_exit(NULL);
+}
+
+void matrix::add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr)
+{
+    for (int i = 0; i < rows; i++)
+    {
+        pthread_create(&tids[i], &attr, add_row, new thread_args(&left, &right, &result, i, mid));
+    }
+}
+
+void matrix::multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr)
+{
+    for (int i = 0; i < rows; i++)
+    {
+        pthread_create(&tids[i], &attr, multiply_row, new thread_args(&left, &right, &result, i, mid));
+    }
 }
 
 #endif
