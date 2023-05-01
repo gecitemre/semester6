@@ -80,7 +80,7 @@ void *matrix::add_row(void *args)
     for (int j = 0; j < cols; j++)
     {
         row_result[j] = row_left[j] + row_right[j];
-        hw2_write_output(mid, row, j, row_result[j]);
+        hw2_write_output(mid, row+1, j+1, row_result[j]);
         sem_post(&semaphores[mid][row][j]);
     }
     pthread_exit(NULL);
@@ -111,7 +111,7 @@ void *matrix::multiply_row(void *args)
             sum += left_row[k] * right_mat[k][j];
         }
         result_row[j] = sum;
-        hw2_write_output(result.mid, targs->row, j, sum);
+        hw2_write_output(result.mid, row+1, j+1, sum);
     }
     pthread_exit(NULL);
 }
