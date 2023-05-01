@@ -25,13 +25,11 @@ int main() {
     for (int i = 0; i < N; i++)
     {
         semaphores[0][i] = new sem_t[M];
-        sem_init(semaphores[0][i], 0, 0);
     }
     semaphores[1] = new sem_t *[M];
     for (int i = 0; i < M; i++)
     {
         semaphores[1][i] = new sem_t[K];
-        sem_init(semaphores[1][i], 0, 0);
     }
     int thread_count = N + M + N;
     pthread_t tids[thread_count];
