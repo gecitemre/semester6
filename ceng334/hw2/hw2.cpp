@@ -1,6 +1,7 @@
 #include <iostream>
 #include "matrix.hpp"
 #include "hw2_output.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -38,14 +39,15 @@ int main() {
     pthread_attr_init(&attr);
     thread_args args[thread_count];
     matrix J(N, M);
-    matrix::add(A, B, J, N, M, tids, 0, attr);
+    matrix::add(A, B, J, N, M, tids, attr);
     matrix L(M, K);
-    matrix::add(C, D, L, M, K, tids + N, 1, attr);
+    matrix::add(C, D, L, M, K, tids + N, attr);
     matrix R(N, K);
-    matrix::multiply(J, L, R, N, K, tids + N + M, 2, attr);
+    matrix::multiply(J, L, R, N, K, tids + N + M, attr);
     for (int i = 0; i < thread_count; i++)
     {
         pthread_join(tids[i], NULL);
+
     }
     cout << R;
 }

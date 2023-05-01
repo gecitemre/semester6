@@ -11,11 +11,12 @@ using namespace std;
 struct thread_args;
 
 extern sem_t **semaphores[2];
-
+int count = -4;
 class matrix
 {
     int rows, cols;
     int **mat;
+    int mid;
     static void *add_row(void *args);
     static void *multiply_row(void *args);
 public:
@@ -26,6 +27,7 @@ public:
         {
             mat[i] = new int[cols];
         }
+        mid = count++;
     }
     void fill_stdin()
     {
@@ -51,8 +53,8 @@ public:
         }
         return os;
     }
-    static void add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr);
-    static void multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr);
+    static void add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, pthread_attr_t attr);
+    static void multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, pthread_attr_t attr);
 };
 
 struct thread_args
@@ -60,22 +62,26 @@ struct thread_args
     matrix *left, *right, *result;
     int row, matrix_id;
     thread_args() {}
-    thread_args(matrix *left, matrix *right, matrix *result, int row, int matrix_id) : left(left), right(right), result(result), row(row), matrix_id(matrix_id) {}
+    thread_args(matrix *left, matrix *right, matrix *result, int row) : left(left), right(right), result(result), row(row) {}
 };
 
 void *matrix::add_row(void *args)
 {
     thread_args *targs = (thread_args *)args;
+    matrix &left = *targs->left;
+    matrix &right = *targs->right;
+    matrix &result = *targs->result;
     int row = targs->row;
-    int cols = targs->left->cols;
-    int* row_left = targs->left->mat[row];
-    int* row_right = targs->right->mat[row];
-    int* row_result = targs->result->mat[row];
+    int cols = left.cols;
+    int* row_left = left.mat[row];
+    int* row_right = right.mat[row];
+    int* row_result = result.mat[row];
+    int mid = result.mid;
     for (int j = 0; j < cols; j++)
     {
         row_result[j] = row_left[j] + row_right[j];
-        hw2_write_output(targs->matrix_id, row, j, row_result[j]);
-        sem_post(&semaphores[0][row][j]);
+        hw2_write_output(mid, row, j, row_result[j]);
+        sem_post(&semaphores[mid][row][j]);
     }
     pthread_exit(NULL);
 }
@@ -83,42 +89,46 @@ void *matrix::add_row(void *args)
 void *matrix::multiply_row(void *args)
 {
     thread_args *targs = (thread_args *)args;
-    int* row_left = targs->left->mat[targs->row];
-    int* row_result = targs->result->mat[targs->row];
-    int cols = targs->left->cols;
-    matrix *right = targs->right;
-    for (int j = 0; j < right->cols; j++)
+    matrix &left = *targs->left;
+    matrix &right = *targs->right;
+    matrix &result = *targs->result;
+    int **right_mat = right.mat;
+    int row = targs->row;
+    int* left_row = left.mat[row];
+    int* result_row = result.mat[row];
+    int cols = left.cols;
+    for (int j = 0; j < right.cols; j++)
     {
         int sum = 0;
         for (int k = 0; k < cols; k++)
         {
-            int sval;
-            sem_getvalue(&semaphores[0][targs->row][k], &sval);
-            if (sval == 0)
-            {
-                sem_wait(&semaphores[0][targs->row][k]);
-            }
-            sum += row_left[k] * right->mat[k][j];
+            int sem_value;
+
+            sem_wait(&semaphores[left.mid][row][k]);
+            sem_post(&semaphores[left.mid][row][k]);
+            sem_wait(&semaphores[right.mid][k][j]);
+            sem_post(&semaphores[right.mid][k][j]);
+            sum += left_row[k] * right_mat[k][j];
         }
-        row_result[j] = sum;
-        hw2_write_output(targs->matrix_id, targs->row, j, sum);
+        result_row[j] = sum;
+        hw2_write_output(result.mid, targs->row, j, sum);
     }
     pthread_exit(NULL);
 }
 
-void matrix::add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr)
+void matrix::add(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, pthread_attr_t attr)
 {
     for (int i = 0; i < rows; i++)
     {
-        pthread_create(&tids[i], &attr, add_row, new thread_args(&left, &right, &result, i, mid));
+        pthread_create(&tids[i], &attr, add_row, new thread_args(&left, &right, &result, i));
     }
 }
 
-void matrix::multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, int mid, pthread_attr_t attr)
+void matrix::multiply(matrix &left, matrix &right, matrix &result, int rows, int cols, pthread_t *tids, pthread_attr_t attr)
 {
     for (int i = 0; i < rows; i++)
     {
-        pthread_create(&tids[i], &attr, multiply_row, new thread_args(&left, &right, &result, i, mid));
+        pthread_create(&tids[i], &attr, multiply_row, new thread_args(&left, &right, &result, i));
     }
 }
 
