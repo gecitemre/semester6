@@ -33,7 +33,7 @@ int main() {
         semaphores[1][i] = new sem_t[K];
         sem_init(semaphores[1][i], 0, 0);
     }
-    int thread_count = N + M + K;
+    int thread_count = N + M + N;
     pthread_t tids[thread_count];
     pthread_attr_t attr;
     pthread_attr_init(&attr);
@@ -44,10 +44,10 @@ int main() {
     matrix::add(C, D, L, M, K, tids + N, attr);
     matrix R(N, K);
     matrix::multiply(J, L, R, N, K, tids + N + M, attr);
-    for (int i = 0; i < thread_count; i++)
+    int i = thread_count;
+    for (int i=0; i<thread_count; i++)
     {
         pthread_join(tids[i], NULL);
-
     }
     cout << R;
 }
