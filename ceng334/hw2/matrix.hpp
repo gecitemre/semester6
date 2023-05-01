@@ -138,9 +138,9 @@ void *matrix::multiply_row(void *args)
         for (int k = 0; k < cols; k++)
         {
             sum += row_left[k] * right->mat[k][j];
-            hw2_write_output(targs->matrix_id, targs->row, j, sum);
         }
         row_result[j] = sum;
+        hw2_write_output(targs->matrix_id, targs->row, j, sum);
     }
     pthread_exit(NULL);
 }
