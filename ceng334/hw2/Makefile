@@ -1,6 +1,8 @@
 SRCS = hw2.cpp matrix.hpp hw2_output.c hw2_output.h
 TARFILE = hw2.tar.gz
 
+all: hw2
+
 hw2: $(SRCS)
 	g++ $(SRCS) -o hw2
 
