@@ -11,22 +11,22 @@ tar: $(SRCS) Makefile
 
 test1: tar
 	tar -xf $(TARFILE)
-	make
+	make all
 	./bgame < testcases/input1.txt
 
 test2: tar
 	tar -xf $(TARFILE)
-	make
+	make all
 	./bgame < testcases/input2.txt
 
 test3: tar
 	tar -xf $(TARFILE)
-	make
+	make all
 	./bgame < testcases/input3.txt
 
 test4: tar
 	tar -xf $(TARFILE)
-	make
+	make all
 	./bgame < testcases/input4.txt
 
 tests:
