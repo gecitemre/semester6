@@ -1,8 +1,10 @@
 SRCS = bgame.cpp logging.c logging.h message.c message.h
 TARFILE = e2521581.tar.gz
 
+all: bgame
+
 bgame: $(SRCS)
-	g++ $(SRCS) -o bgame
+	g++ -lpthread $(SRCS) -o bgame
 
 tar: $(SRCS) Makefile
 	tar -czvf $(TARFILE) bgame.cpp Makefile
