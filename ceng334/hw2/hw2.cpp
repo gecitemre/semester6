@@ -1,5 +1,7 @@
 #include <iostream>
 #include <unistd.h>
+#include <semaphore.h>
+#include <pthread.h>
 #include "hw2_output.h"
 #include "matrix.hpp"
 
