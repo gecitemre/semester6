@@ -1,6 +1,4 @@
 #include <iostream>
-#include <pthread.h>
-#include <semaphore.h>
 #include <unistd.h>
 #include "matrix.hpp"
 #include "hw2_output.h"
@@ -20,7 +18,5 @@ int main() {
     matrix J = A + B;
     matrix L = C + D;
     matrix R = J * L;
-    delete &J;
-    delete &L;
     cout << R;
 }

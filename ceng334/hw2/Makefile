@@ -1,21 +1,33 @@
-SRCS = hw2.cpp matrix.cpp hw2_output.c
+CXX_SOURCES = hw2.cpp matrix.cpp
+C_SOURCES = hw2_output.c
+CXX_OBJECTS = $(CXX_SOURCES:.cpp=.o)
+C_OBJECTS = $(C_SOURCES:.c=.o)
+OBJECTS = $(CXX_OBJECTS) $(C_OBJECTS)
 HEADERS = matrix.hpp hw2_output.h
-TARFILE = hw2.tar.gz
+TARGET = hw2
+TARFILE = $(TARGET).tar.gz
 
-all: hw2
+all: $(TARGET)
 
-hw2: $(SRCS) $(HEADERS)
-	g++ -pthread $(SRCS) -o hw2
+$(TARGET): $(OBJECTS)
+	g++ -o $(TARGET) $(OBJECTS) -lpthread
+
+%.o: %.cpp $(HEADERS)
+	g++ -c $< -o $@
+
+%.o: %.c $(HEADERS)
+	gcc -c $< -o $@
 
 tar: $(TARFILE)
 
-hw2.tar.gz: $(SRCS) Makefile
-	tar -czvf $(TARFILE) hw2.cpp matrix.hpp Makefile
+SUBMISSION = hw2.cpp matrix.cpp matrix.hpp Makefile
+$(TARFILE): $(SUBMISSION)
+	tar -czf $(TARFILE) $(SUBMISSION)
 
 test: tar
 	tar -xf $(TARFILE)
 	make
-	./hw2 < input_example.txt
+	./$(TARGET) < input_example.txt
 
-clear:
-	rm -f $(TARFILE) hw2
+clean:
+	rm -f $(TARFILE) $(OBJECTS) $(TARGET)

@@ -1,28 +1,18 @@
 #include <iostream>
-#include <pthread.h>
-#include <semaphore.h>
 #include "matrix.hpp"
 #include "hw2_output.h"
 
 using namespace std;
 
-int count = -4;
-
-matrix::matrix(int rows, int cols) : rows(rows), cols(cols)
-{
-    mat = new int *[rows];
-    for (int i = 0; i < rows; i++)
-    {
-        mat[i] = new int[cols];
-    }
-    mid = count++;
-}
+int matrix::count = -4;
 
 void matrix::fill_stdin()
     {
         cin >> rows >> cols;
+        mat = new int *[rows];
         for (int i = 0; i < rows; i++)
         {
+            mat[i] = new int[cols];
             for (int j = 0; j < cols; j++)
             {
                 cin >> mat[i][j];
@@ -31,6 +21,7 @@ void matrix::fill_stdin()
     }
 ostream &operator<<(ostream &os, matrix &m)
     {
+        m.wait();
         for (int i = 0; i < m.rows; i++)
         {
             for (int j = 0; j < m.cols; j++)
@@ -117,18 +108,22 @@ matrix matrix::operator+(matrix &other)
     return result;
 }
 
-matrix::~matrix()
+void matrix::wait()
 {
-    for (int i = 0; i < rows; i++)
+    if (tids == NULL)
     {
-        delete[] mat[i];
+        return;
     }
-    delete[] mat;
     for (int i = 0; i < rows; i++)
     {
         pthread_join(tids[i], NULL);
     }
-    delete[] tids;
+    tids = NULL;
+}
+
+matrix::~matrix()
+{
+    wait();
 }
 
 matrix matrix::operator*(matrix &other)
@@ -136,8 +131,7 @@ matrix matrix::operator*(matrix &other)
     pthread_t *tids = new pthread_t[rows];
     pthread_attr_t attr;
     pthread_attr_init(&attr);
-    sem_t **sems = new sem_t *[rows];
-    matrix result(rows, other.cols, tids, sems);
+    matrix result(rows, other.cols, tids, semaphores);
     for (int i = 0; i < rows; i++)
     {
         pthread_create(&tids[i], &attr, multiply_row, new thread_args(this, &other, &result, i));
@@ -145,13 +139,16 @@ matrix matrix::operator*(matrix &other)
     return result;
 }
 
-matrix::matrix() {}
 
-matrix::matrix(int rows, int cols, pthread_t *tids, sem_t **sems) : rows(rows), cols(cols), tids(tids), semaphores(sems) {}
+matrix::matrix() : matrix(0, 0) { }
 
-matrix::matrix(matrix &&other) : rows(other.rows), cols(other.cols), tids(other.tids), semaphores(other.semaphores), mat(other.mat), mid(other.mid)
-{
-    other.mat = NULL;
-    other.tids = NULL;
-    other.semaphores = NULL;
+matrix::matrix(int rows, int cols): matrix(rows, cols, NULL, NULL) { }
+
+matrix::matrix(int rows, int cols, pthread_t *tids, sem_t **sems) : rows(rows), cols(cols), tids(tids), semaphores(sems) {
+    mat = new int *[rows];
+    for (int i = 0; i < rows; i++)
+    {
+        mat[i] = new int[cols];
+    }
+    mid = count++;
 }

@@ -1,6 +1,8 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
+#include <pthread.h>
+#include <semaphore.h>
 using namespace std;
 
 class matrix
@@ -12,10 +14,12 @@ class matrix
     static void *multiply_row(void *args);
     pthread_t *tids;
     sem_t **semaphores;
-public:
-    matrix();
+    static int count;
+    void wait();
     matrix(int rows, int cols);
     matrix(int rows, int cols, pthread_t *tids, sem_t **semaphores);
+public:
+    matrix();
     matrix(matrix &&other);
     ~matrix();
     void fill_stdin();
