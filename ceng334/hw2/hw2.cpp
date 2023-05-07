@@ -1,7 +1,7 @@
 #include <iostream>
+#include <unistd.h>
 #include "matrix.hpp"
 #include "hw2_output.h"
-#include <unistd.h>
 
 using namespace std;
 
