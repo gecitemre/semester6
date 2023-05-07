@@ -4,7 +4,7 @@ TARFILE = hw2.tar.gz
 all: hw2
 
 hw2: $(SRCS)
-	g++ -lpthread $(SRCS) -o hw2
+	g++ -pthread $(SRCS) -o hw2
 
 tar: $(TARFILE)
 
