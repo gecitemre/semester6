@@ -24,10 +24,10 @@ SUBMISSION = hw2.cpp matrix.cpp matrix.hpp Makefile
 $(TARFILE): $(SUBMISSION)
 	tar -czf $(TARFILE) $(SUBMISSION)
 
-test: tar
+test1: tar
 	tar -xf $(TARFILE)
 	make
-	./$(TARGET) < input_example.txt
+	./$(TARGET) < input1.txt
 
 clean:
 	rm -f $(TARFILE) $(OBJECTS) $(TARGET)
