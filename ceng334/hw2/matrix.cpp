@@ -73,7 +73,6 @@ void *matrix::multiply_row(void *args)
         int sum = 0;
         for (int k = 0; k < cols; k++)
         {
-            int sem_value;
             sem_wait(&left.semaphores[row][k]);
             sem_post(&left.semaphores[row][k]);
             sem_wait(&right.semaphores[k][j]);
