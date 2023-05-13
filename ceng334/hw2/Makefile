@@ -27,10 +27,10 @@ $(TARFILE): $(SUBMISSION)
 test%: tar
 	tar -xf $(TARFILE)
 	make
-	./$(TARGET) < input$*.txt > my_output$*.txt
+	./$(TARGET) < testcases/input$*.txt > testcases/my_output$*.txt
 
 diff-test%: test%
-	code output$*.txt my_output$*.txt -d
+	code testcases/output$*.txt testcases/my_output$*.txt -d
 
 clean:
 	rm -f $(TARFILE) $(OBJECTS) $(TARGET)
