@@ -1,92 +1,149 @@
-#include <iostream>
 #include "message.h"
 #include "logging.h"
-#include <sys/select.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <list>
+#include <bits/stdc++.h>
+#include <sys/wait.h>
 
 using namespace std;
 
-#define PIPE(fd) socketpair(AF_UNIX, SOCK_STREAM, PF_UNIX, fd)
+#define BOMB_DIR "./bomb"
+#define MAX_ARG_SIZE 256
 #define distance(a, b) (abs((int)a.x - (int)b.x) + abs((int)a.y - (int)b.y))
+#define PIPE(fd) socketpair(AF_UNIX, SOCK_STREAM, PF_UNIX, fd)
 
-// Algorithm 1 Controller Loop
-// Read the input information about the game from standard input
-// Create pipes for bombers (see IPC section)
-// Fork the bomber processes (see fork function)
-// Redirect the bomber standard input and output to the pipe (see dup2) and close the unused
-// end.
-// Execute bomber executable with its arguments (see exec family of functions)
-// while there are more than one bomber remaining: do
-// Select or poll the bomb pipes to see there is any input (see IPC for details)
-// Read and act according to the message (see Messages)
-// Remove any obstacles if their durability is zero and mark killed bombers
-// Reap exploded bombs (see wait family of functions)
-// Select or poll the bomber pipes to see there is any input (see IPC for details)
-// Read and act according to the message (see Messages) unless the bomber is marked as killed
-// Inform marked bombers
-// Reap informed killed bombers (see wait family of functions)
-// Sleep for 1 millisecond (to prevent CPU hogging)
-// end while
-// Wait for remaining bombs to explode and reap them
-
-im read_message(int fd, pid_t pid)
+struct game_entity
 {
-    im message;
-    read(fd, &message, sizeof(im));
-    imp print_message;
-    print_message.pid = pid;
-    print_message.m = &message;
-    print_output(&print_message, NULL, NULL, NULL);
-    return message;
-}
-
-void write_outgoing_message(int fd, pid_t pid, om &message)
-{
-    omp print_message;
-    print_message.pid = pid;
-    print_message.m = &message;
-    write(fd, &message, sizeof(om));
-    print_output(NULL, &print_message, NULL, NULL);
-}
-
-typedef struct
-{
-    coordinate position;
-    int pipe[2];
+private:
     pid_t pid;
-} bomber;
+    int fd;
 
-typedef struct
-{
+public:
     coordinate position;
-    int pipe[2];
+    ~game_entity()
+    {
+        waitpid(pid, NULL, WNOHANG);
+    }
+    void create_process(char *args[])
+    {
+        int pipe[2];
+        PIPE(pipe);
+        pid = fork();
+        if (pid == 0)
+        {
+            // Child writes and reads from pipe[1]
+            dup2(pipe[1], STDIN_FILENO);
+            dup2(pipe[1], STDOUT_FILENO);
+            close(pipe[0]);
+            if (execvp(args[0], args) == -1)
+            {
+                perror("execvp");
+                exit(1);
+            }
+        }
+        else if (pid == -1)
+        {
+            perror("fork");
+            exit(1);
+        }
+        close(pipe[1]);
+        fd = pipe[0];
+    }
+    im read_message()
+    {
+        im message;
+        read_data(fd, &message);
+        imp print_message;
+        print_message.pid = pid;
+        print_message.m = &message;
+        print_output(&print_message, NULL, NULL, NULL);
+        return message;
+    }
+
+    // write with printing
+    void write_outgoing_message(om &message)
+    {
+        omp print_message;
+        print_message.pid = pid;
+        print_message.m = &message;
+        write_message(message);
+        print_output(NULL, &print_message, NULL, NULL);
+    }
+
+    // write without printing
+    void write_message(om &message)
+    {
+        // write(fd, &message, sizeof(message));
+        send_message(fd, &message);
+    }
+
+    int get_fd()
+    {
+        return fd;
+    }
+
+    pid_t get_pid()
+    {
+        return pid;
+    }
+
+    bool operator==(const game_entity &other) const
+    {
+        return position.x == other.position.x && position.y == other.position.y;
+    }
+};
+
+struct bomber : public game_entity
+{
+    bool alive = true;
+    bool won = false;
+    void win()
+    {
+        om message;
+        message.type = BOMBER_WIN;
+        write_outgoing_message(message);
+        won = true;
+    }
+    void send_location()
+    {
+        om message;
+        message.type = BOMBER_LOCATION;
+        message.data.new_position = position;
+        write_outgoing_message(message);
+    }
+};
+
+struct bomb : public game_entity
+{
     unsigned radius;
-    pid_t pid;
-} bomb;
+};
 
-list<bomber> bombers;
-list<bomb> bombs;
-list<obsd> obstacles;
-
-void send_bomber_location(bomber &bomber)
+struct obstacle
 {
-    om message;
-    message.type = BOMBER_LOCATION;
-    message.data.new_position = bomber.position;
-    // write(bomber.pipe[1], &message, sizeof(om));
-    write_outgoing_message(bomber.pipe[1], bomber.pid, message);
-}
+    coordinate position;
+    int remaining_durability;
+    operator obsd()
+    {
+        return obsd{position, remaining_durability};
+    }
+    bool operator==(const obstacle &other) const
+    {
+        return position.x == other.position.x && position.y == other.position.y;
+    }
+};
 
 int main()
 {
+    list<bomber> bombers;
+    list<bomb> bombs;
+    list<obstacle> obstacles;
     unsigned map_width, map_height, obstacle_count, bomber_count;
     cin >> map_width >> map_height >> obstacle_count >> bomber_count;
+    bomber *bombers_grid[map_width][map_height];
+    obstacle *obstacles_grid[map_width][map_height];
+    bomb *bombs_grid[map_width][map_height];
     for (unsigned i = 0; i < obstacle_count; i++)
     {
-        obstacles.push_back(obsd());
-        obsd &obstacle = obstacles.back();
+        obstacles.push_back(obstacle());
+        obstacle &obstacle = obstacles.back();
         cin >> obstacle.position.x >> obstacle.position.y >> obstacle.remaining_durability;
     }
 
@@ -97,35 +154,18 @@ int main()
         unsigned total_argument_count;
 
         cin >> new_bomber.position.x >> new_bomber.position.y >> total_argument_count;
-        char **args = new char *[total_argument_count + 1];
+        char *args[total_argument_count + 1];
         for (unsigned j = 0; j < total_argument_count; j++)
         {
-            args[j] = new char[256];
+            args[j] = new char[MAX_ARG_SIZE];
             cin >> args[j];
         }
         args[total_argument_count] = NULL;
-        pipe(new_bomber.pipe);
-        new_bomber.pid = fork();
-        if (new_bomber.pid == 0)
+        new_bomber.create_process(args);
+        for (unsigned j = 0; j < total_argument_count; j++)
         {
-            // Child writes and reads from pipe[1]
-            dup2(new_bomber.pipe[1], STDIN_FILENO);
-            dup2(new_bomber.pipe[1], STDOUT_FILENO);
-            close(new_bomber.pipe[0]);
-            if (execvp(args[0], args) == -1)
-            {
-                perror("execvp");
-                exit(1);
-            }
+            delete[] args[j];
         }
-        else if (new_bomber.pid == -1)
-        {
-            perror("fork");
-            exit(1);
-        }
-        
-        // Parent writes and reads from pipe[0]
-        close(new_bomber.pipe[1]);
     }
 
     while (true)
@@ -135,31 +175,44 @@ int main()
         int nfds = 0;
         for (bomber &b : bombers)
         {
-            FD_SET(b.pipe[0], &readfds);
-            nfds = max(nfds, b.pipe[0]);
+            FD_SET(b.get_fd(), &readfds);
+            nfds = max(nfds, b.get_fd());
         }
         for (bomb bomb : bombs)
         {
-            FD_SET(bomb.pipe[0], &readfds);
-            nfds = max(nfds, bomb.pipe[0]);
+            FD_SET(bomb.get_fd(), &readfds);
+            nfds = max(nfds, bomb.get_fd());
         }
-        int temp[2];
-        PIPE(temp);
-        FD_SET(temp[0], &readfds);
         if (select(nfds + 1, &readfds, NULL, NULL, NULL) == -1)
         {
             perror("select");
             exit(1);
         }
-        for (bomber &ready_bomber : bombers)
+        for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
         {
-            if (FD_ISSET(ready_bomber.pipe[0], &readfds))
+            bomber &ready_bomber = *bomber_it;
+            if (FD_ISSET(ready_bomber.get_fd(), &readfds))
             {
-                im incoming = read_message(ready_bomber.pipe[0], ready_bomber.pid);
+                im incoming = ready_bomber.read_message();
+                if (!ready_bomber.alive && !ready_bomber.won)
+                {
+                    om death_message;
+                    death_message.type = BOMBER_DIE;
+                    ready_bomber.write_outgoing_message(death_message);
+                    bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
+                    bombers.erase(bomber_it--);
+                    continue;
+                }
+                else if (ready_bomber.won)
+                {
+                    ready_bomber.win();
+                    bombers_grid[ready_bomber.position.x][ready_bomber.position.y] = NULL;
+                    bombers.erase(bomber_it--);
+                }
                 switch (incoming.type)
                 {
                 case BOMBER_START:
-                    send_bomber_location(ready_bomber);
+                    ready_bomber.send_location();
                     break;
 
                 case BOMBER_MOVE:
@@ -168,7 +221,7 @@ int main()
                         goto case_bomber_move_exit;
                     }
 
-                    for (obsd &obstacle : obstacles)
+                    for (obstacle &obstacle : obstacles)
                     {
                         // Check if the bomber is trying to move into an obstacle
                         if (obstacle.position.x == incoming.data.target_position.x && obstacle.position.y == incoming.data.target_position.y)
@@ -187,7 +240,7 @@ int main()
                     }
 
                     // Check if the bomber is trying to move out of the map
-                    if (incoming.data.target_position.x < 0 || incoming.data.target_position.x >= map_width || incoming.data.target_position.y < 0 || incoming.data.target_position.y >= map_height)
+                    if (incoming.data.target_position.x >= map_width || incoming.data.target_position.y >= map_height)
                     {
                         goto case_bomber_move_exit;
                     }
@@ -195,7 +248,7 @@ int main()
                     ready_bomber.position = incoming.data.target_position;
 
                 case_bomber_move_exit:
-                    send_bomber_location(ready_bomber);
+                    ready_bomber.send_location();
                     break;
 
                 case BOMBER_PLANT:
@@ -205,7 +258,7 @@ int main()
 
                     for (bomb &other_bomb : bombs)
                     {
-                        if (other_bomb.position.x == other_bomb.position.x && other_bomb.position.y == other_bomb.position.y)
+                        if (other_bomb.position.x == ready_bomber.position.x && other_bomb.position.y == ready_bomber.position.y)
                         {
                             bomber_plant_outgoing.data.planted = false;
                             break;
@@ -215,116 +268,174 @@ int main()
                     {
                         bombs.push_back(bomb());
                         bomb &new_bomb = bombs.back();
-                        new_bomb.position = new_bomb.position;
+                        new_bomb.position = ready_bomber.position;
                         new_bomb.radius = incoming.data.bomb_info.radius;
-                        PIPE(new_bomb.pipe);
-                        pid_t pid = fork();
-                        if (pid == 0)
-                        {
-                            dup2(new_bomb.pipe[1], STDIN_FILENO);
-                            dup2(new_bomb.pipe[1], STDOUT_FILENO);
-                            close(new_bomb.pipe[0]);
-                            char *args[3] = {"bomb", NULL, NULL};
-                            args[1] = new char[256];
-                            sprintf(args[1], "%ld", incoming.data.bomb_info.interval);
-                            execvp("bomb", args);
-                        }
-                        new_bomb.pid = pid;
+                        char *args[3] = {BOMB_DIR, new char[MAX_ARG_SIZE], NULL};
+                        sprintf(args[1], "%ld", incoming.data.bomb_info.interval);
+                        args[2] = NULL;
+                        new_bomb.create_process(args);
+                        delete[] args[1];
                     }
-                    write_outgoing_message(ready_bomber.pipe[0], ready_bomber.pid, bomber_plant_outgoing);
+                    ready_bomber.write_outgoing_message(bomber_plant_outgoing);
                     break;
                 case BOMBER_SEE:
-                    object_data outgoing_data[25];
-                    unsigned object_count = 0;
-                    for (obsd &obstacle : obstacles)
+                    memset(obstacles_grid, 0, sizeof(obstacles_grid));
+                    for (obstacle &obstacle : obstacles)
                     {
-                        if (distance(ready_bomber.position, obstacle.position) <= 3)
-                        {
-                            outgoing_data[object_count].type = OBSTACLE;
-                            outgoing_data[object_count].position = obstacle.position;
-                            object_count++;
-                        }
+                        obstacles_grid[obstacle.position.x][obstacle.position.y] = &obstacle;
                     }
-                    for (bomber &other_bomber : bombers)
+                    memset(bombers_grid, 0, sizeof(bombers_grid));
+                    for (bomber &bomber : bombers)
                     {
-                        if (&other_bomber != &ready_bomber && distance(ready_bomber.position, other_bomber.position) <= 3)
-                        {
-                            outgoing_data[object_count].type = BOMBER;
-                            outgoing_data[object_count].position = other_bomber.position;
-                            object_count++;
-                        }
+                        bombers_grid[bomber.position.x][bomber.position.y] = &bomber;
                     }
+                    memset(bombs_grid, 0, sizeof(bombs_grid));
                     for (bomb &bomb : bombs)
                     {
-                        if (distance(ready_bomber.position, bomb.position) <= 3)
-                        {
-                            outgoing_data[object_count].type = BOMB;
-                            outgoing_data[object_count].position = bomb.position;
-                            object_count++;
-                        }
+                        bombs_grid[bomb.position.x][bomb.position.y] = &bomb;
                     }
+
+#define test_vision(offset_x, offset_y, direction)                                     \
+    if (!flag[direction])                                                              \
+    {                                                                                  \
+        int x = ready_bomber.position.x + offset_x;                                    \
+        int y = ready_bomber.position.y + offset_y;                                    \
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)                       \
+        {                                                                              \
+            if (!(offset_x == 0 && offset_y == 0) && bombers_grid[x][y] != NULL)       \
+            {                                                                          \
+                outgoing_data[object_count].type = BOMBER;                             \
+                outgoing_data[object_count].position = bombers_grid[x][y]->position;   \
+                object_count++;                                                        \
+            }                                                                          \
+            else if (bombs_grid[x][y] != NULL)                                         \
+            {                                                                          \
+                outgoing_data[object_count].type = BOMB;                               \
+                outgoing_data[object_count].position = bombs_grid[x][y]->position;     \
+                object_count++;                                                        \
+            }                                                                          \
+            else if (obstacles_grid[x][y] != NULL)                                     \
+            {                                                                          \
+                outgoing_data[object_count].type = OBSTACLE;                           \
+                outgoing_data[object_count].position = obstacles_grid[x][y]->position; \
+                object_count++;                                                        \
+                flag[direction] = true;                                                \
+            }                                                                          \
+        }                                                                              \
+    }
+                    bool flag[5] = {};
+                    object_data outgoing_data[25];
+                    unsigned object_count = 0;
+                    test_vision(0, 0, 4)
+
+                        if (!flag[4]) for (int offset = 1; offset < 3; offset++){
+                            test_vision(0, offset, 0)
+                                test_vision(0, -offset, 1)
+                                    test_vision(offset, 0, 2)
+                                        test_vision(-offset, 0, 3)}
 
                     om outgoing_object_count_message;
                     outgoing_object_count_message.type = BOMBER_VISION;
                     outgoing_object_count_message.data.object_count = object_count;
-                    omp out;
-                    out.pid = ready_bomber.pid;
-                    out.m = &outgoing_object_count_message;
-                    write(ready_bomber.pipe[0], &outgoing_object_count_message, sizeof(omd));
+
+                    ready_bomber.write_message(outgoing_object_count_message);
 
                     omp outgoing_object_count_message_print;
-                    outgoing_object_count_message_print.pid = ready_bomber.pid;
+                    outgoing_object_count_message_print.pid = ready_bomber.get_pid();
                     outgoing_object_count_message_print.m = &outgoing_object_count_message;
-                    unsigned index = 0;
-                    send_object_data(ready_bomber.pipe[0], object_count, outgoing_data);
+                    send_object_data(ready_bomber.get_fd(), object_count, outgoing_data);
                     print_output(NULL, &outgoing_object_count_message_print, NULL, outgoing_data);
                     break;
                 }
             }
         }
+
         for (auto bomb_it = bombs.begin(); bomb_it != bombs.end(); bomb_it++)
         {
-            bomb &ready_bomb = *bomb_it;
-            if (FD_ISSET(ready_bomb.pipe[0], &readfds))
+            if (FD_ISSET(bomb_it->get_fd(), &readfds))
             {
-                im incoming = read_message(ready_bomb.pipe[0], ready_bomb.pid);
-                // type is always BOMB_EXPLODE
+                bomb &ready_bomb = *bomb_it;
+                ready_bomb.read_message();
 
-                for (auto obstacle_it = obstacles.begin(); obstacle_it != obstacles.end(); obstacle_it++)
+                memset(obstacles_grid, 0, sizeof(obstacles_grid));
+                for (obstacle &obstacle : obstacles)
                 {
-                    obsd &obstacle = *obstacle_it;
-                    if (distance(obstacle.position, ready_bomb.position) <= ready_bomb.radius)
-                    {
-                        if (obstacle.remaining_durability != -1)
-                        {
-                            if (--obstacle.remaining_durability == 0)
-                                obstacles.erase(obstacles.begin());
-                        }
-                    }
-                    write(ready_bomb.pipe[0], &obstacle, sizeof(obsd));
-                    print_output(NULL, NULL, &obstacle, NULL);
+                    obstacles_grid[obstacle.position.x][obstacle.position.y] = &obstacle;
+                }
+                memset(bombers_grid, 0, sizeof(bombers_grid));
+                for (bomber &bomber : bombers)
+                {
+                    bombers_grid[bomber.position.x][bomber.position.y] = &bomber;
                 }
 
-                for (auto bomber_it = bombers.begin(); bomber_it != bombers.end(); bomber_it++)
+#define test_explosion(offset_x, offset_y, direction)                    \
+    if (!flag[direction])                                                \
+    {                                                                    \
+        int x = ready_bomb.position.x + offset_x;                        \
+        int y = ready_bomb.position.y + offset_y;                        \
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)         \
+        {                                                                \
+            if (obstacles_grid[x][y] != NULL)                            \
+            {                                                            \
+                obstacle &obstacle = *obstacles_grid[x][y];              \
+                if (obstacle.remaining_durability != -1)                 \
+                {                                                        \
+                    obstacle.remaining_durability--;                     \
+                }                                                        \
+                write(ready_bomb.get_fd(), &obstacle, sizeof(obstacle)); \
+                obsd outgoing(obstacle);                                 \
+                print_output(NULL, NULL, &outgoing, NULL);               \
+                if (obstacle.remaining_durability == 0)                  \
+                {                                                        \
+                    obstacles.remove(obstacle);                          \
+                    obstacles_grid[x][y] = NULL;                         \
+                }                                                        \
+            }                                                            \
+            else if (bombers_grid[x][y] != NULL)                         \
+            {                                                            \
+                bomber &bomber_in_range = *bombers_grid[x][y];           \
+                int alive_count = 0;                                     \
+                for (bomber & bomber : bombers)                          \
+                {                                                        \
+                    if (bomber.alive)                                    \
+                    {                                                    \
+                        alive_count++;                                   \
+                    }                                                    \
+                }                                                        \
+                if (alive_count == 1)                                    \
+                {                                                        \
+                    for (bomber & bomber : bombers)                      \
+                    {                                                    \
+                        if (bomber.alive && !bomber.won)                 \
+                        {                                                \
+                            bomber.won = true;                           \
+                        }                                                \
+                    }                                                    \
+                }                                                        \
+                if (!bomber_in_range.won)                                \
+                    bomber_in_range.alive = false;                       \
+            }                                                            \
+        }                                                                \
+    }
+                bool flag[5] = {};
+
+                test_explosion(0, 0, 4)
+
+                    if (!flag[4]) for (int offset = 1; offset <= ready_bomb.radius; offset++)
                 {
-                    bomber &bomber_in_range = *bomber_it;
-                    if (distance(bomber_in_range.position, ready_bomb.position) <= ready_bomb.radius)
-                    {
-                        om bomber_death_message;
-                        bomber_death_message.type = BOMBER_DIE;
-                        write_outgoing_message(bomber_in_range.pipe[0], bomber_in_range.pid, bomber_death_message);
-                        bombers.erase(bomber_it);
-                        if (bombers.size() == 1)
-                        {
-                            om winner_message;
-                            winner_message.type = BOMBER_WIN;
-                            write_outgoing_message(bombers.front().pipe[0], bombers.front().pid, winner_message);
-                            return 0;
-                        }
-                    }
+                    test_explosion(offset, 0, 0);
+                    test_explosion(-offset, 0, 1);
+                    test_explosion(0, offset, 2);
+                    test_explosion(0, -offset, 3);
                 }
-                bombs.erase(bomb_it);
+                bombs_grid[ready_bomb.position.x][ready_bomb.position.y] = NULL;
+                bombs.erase(bomb_it--);
             }
+        }
+
+        if (bombers.size() == 0 && bombs.size() == 0)
+        {
+            return 0;
         }
     }
 }

@@ -1,0 +1,240 @@
+IN pid:2213 mid:0 bomber start.
+OUT pid:2213 mid:0 bomber new location:(6, 52).
+IN pid:2215 mid:0 bomber start.
+OUT pid:2215 mid:0 bomber new location:(73, 15).
+IN pid:2212 mid:0 bomber start.
+OUT pid:2212 mid:0 bomber new location:(95, 71).
+IN pid:2213 mid:1 bomber see.
+OUT pid:2213 mid:1 bomber vision object count:0.
+IN pid:2215 mid:1 bomber see.
+OUT pid:2215 mid:1 bomber vision object count:0.
+IN pid:2212 mid:1 bomber see.
+OUT pid:2212 mid:1 bomber vision object count:0.
+IN pid:2210 mid:0 bomber start.
+OUT pid:2210 mid:0 bomber new location:(30, 30).
+IN pid:2210 mid:1 bomber see.
+OUT pid:2210 mid:1 bomber vision object count:0.
+IN pid:2217 mid:0 bomber start.
+OUT pid:2217 mid:0 bomber new location:(50, 67).
+IN pid:2209 mid:0 bomber start.
+OUT pid:2209 mid:0 bomber new location:(88, 50).
+IN pid:2214 mid:0 bomber start.
+OUT pid:2214 mid:0 bomber new location:(10, 70).
+IN pid:2216 mid:0 bomber start.
+OUT pid:2216 mid:0 bomber new location:(19, 67).
+IN pid:2217 mid:1 bomber see.
+OUT pid:2217 mid:1 bomber vision object count:0.
+IN pid:2209 mid:1 bomber see.
+OUT pid:2209 mid:1 bomber vision object count:0.
+IN pid:2214 mid:1 bomber see.
+OUT pid:2214 mid:1 bomber vision object count:0.
+IN pid:2216 mid:1 bomber see.
+OUT pid:2216 mid:1 bomber vision object count:0.
+IN pid:2211 mid:0 bomber start.
+OUT pid:2211 mid:0 bomber new location:(79, 0).
+IN pid:2211 mid:1 bomber see.
+OUT pid:2211 mid:1 bomber vision object count:0.
+IN pid:2208 mid:0 bomber start.
+OUT pid:2208 mid:0 bomber new location:(35, 70).
+IN pid:2208 mid:1 bomber see.
+OUT pid:2208 mid:1 bomber vision object count:0.
+IN pid:2213 mid:2 bomber move target:(6, 51).
+OUT pid:2213 mid:0 bomber new location:(6, 51).
+IN pid:2215 mid:2 bomber move target:(73, 14).
+OUT pid:2215 mid:0 bomber new location:(73, 14).
+IN pid:2212 mid:2 bomber move target:(95, 70).
+OUT pid:2212 mid:0 bomber new location:(95, 70).
+IN pid:2210 mid:2 bomber move target:(30, 29).
+OUT pid:2210 mid:0 bomber new location:(30, 29).
+IN pid:2217 mid:2 bomber move target:(50, 66).
+OUT pid:2217 mid:0 bomber new location:(50, 66).
+IN pid:2209 mid:2 bomber move target:(88, 49).
+OUT pid:2209 mid:0 bomber new location:(88, 49).
+IN pid:2214 mid:2 bomber move target:(10, 69).
+OUT pid:2214 mid:0 bomber new location:(10, 69).
+IN pid:2216 mid:2 bomber move target:(19, 66).
+OUT pid:2216 mid:0 bomber new location:(19, 66).
+IN pid:2211 mid:2 bomber move target:(78, 0).
+OUT pid:2211 mid:0 bomber new location:(78, 0).
+IN pid:2208 mid:2 bomber move target:(35, 69).
+OUT pid:2208 mid:0 bomber new location:(35, 69).
+IN pid:2213 mid:2 bomber move target:(6, 50).
+OUT pid:2213 mid:0 bomber new location:(6, 50).
+IN pid:2215 mid:2 bomber move target:(73, 13).
+OUT pid:2215 mid:0 bomber new location:(73, 13).
+IN pid:2212 mid:2 bomber move target:(95, 69).
+OUT pid:2212 mid:0 bomber new location:(95, 69).
+IN pid:2210 mid:2 bomber move target:(30, 28).
+OUT pid:2210 mid:0 bomber new location:(30, 28).
+IN pid:2217 mid:2 bomber move target:(50, 65).
+OUT pid:2217 mid:0 bomber new location:(50, 65).
+IN pid:2209 mid:2 bomber move target:(88, 48).
+OUT pid:2209 mid:0 bomber new location:(88, 48).
+IN pid:2214 mid:2 bomber move target:(10, 68).
+OUT pid:2214 mid:0 bomber new location:(10, 68).
+IN pid:2216 mid:2 bomber move target:(19, 65).
+OUT pid:2216 mid:0 bomber new location:(19, 65).
+IN pid:2211 mid:2 bomber move target:(77, 0).
+OUT pid:2211 mid:0 bomber new location:(77, 0).
+IN pid:2208 mid:2 bomber move target:(35, 68).
+OUT pid:2208 mid:0 bomber new location:(35, 68).
+IN pid:2213 mid:2 bomber move target:(6, 49).
+OUT pid:2213 mid:0 bomber new location:(6, 49).
+IN pid:2215 mid:2 bomber move target:(73, 12).
+OUT pid:2215 mid:0 bomber new location:(73, 12).
+IN pid:2212 mid:2 bomber move target:(95, 68).
+OUT pid:2212 mid:0 bomber new location:(95, 68).
+IN pid:2210 mid:2 bomber move target:(30, 27).
+OUT pid:2210 mid:0 bomber new location:(30, 27).
+IN pid:2217 mid:2 bomber move target:(50, 64).
+OUT pid:2217 mid:0 bomber new location:(50, 64).
+IN pid:2209 mid:2 bomber move target:(88, 47).
+OUT pid:2209 mid:0 bomber new location:(88, 47).
+IN pid:2211 mid:2 bomber move target:(76, 0).
+OUT pid:2211 mid:0 bomber new location:(76, 0).
+IN pid:2214 mid:2 bomber move target:(10, 67).
+OUT pid:2214 mid:0 bomber new location:(10, 67).
+IN pid:2216 mid:2 bomber move target:(19, 64).
+OUT pid:2216 mid:0 bomber new location:(19, 64).
+IN pid:2208 mid:2 bomber move target:(35, 67).
+OUT pid:2208 mid:0 bomber new location:(35, 67).
+IN pid:2213 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2213 mid:2 bomber plant bomb result:1.
+IN pid:2215 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2215 mid:2 bomber plant bomb result:1.
+IN pid:2212 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2212 mid:2 bomber plant bomb result:1.
+IN pid:2210 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2210 mid:2 bomber plant bomb result:1.
+IN pid:2217 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2217 mid:2 bomber plant bomb result:1.
+IN pid:2209 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2209 mid:2 bomber plant bomb result:1.
+IN pid:2211 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2211 mid:2 bomber plant bomb result:1.
+IN pid:2214 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2214 mid:2 bomber plant bomb result:1.
+IN pid:2216 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2216 mid:2 bomber plant bomb result:1.
+IN pid:2208 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2208 mid:2 bomber plant bomb result:1.
+IN pid:2213 mid:1 bomber see.
+OUT pid:2213 mid:1 bomber vision object count:1.
+object1 position:(6,49) type:1.
+IN pid:2215 mid:1 bomber see.
+OUT pid:2215 mid:1 bomber vision object count:1.
+object1 position:(73,12) type:1.
+IN pid:2212 mid:1 bomber see.
+OUT pid:2212 mid:1 bomber vision object count:1.
+object1 position:(95,68) type:1.
+IN pid:2210 mid:1 bomber see.
+OUT pid:2210 mid:1 bomber vision object count:1.
+object1 position:(30,27) type:1.
+IN pid:2217 mid:1 bomber see.
+OUT pid:2217 mid:1 bomber vision object count:1.
+object1 position:(50,64) type:1.
+IN pid:2209 mid:1 bomber see.
+OUT pid:2209 mid:1 bomber vision object count:1.
+object1 position:(88,47) type:1.
+IN pid:2211 mid:1 bomber see.
+OUT pid:2211 mid:1 bomber vision object count:1.
+object1 position:(76,0) type:1.
+IN pid:2214 mid:1 bomber see.
+OUT pid:2214 mid:1 bomber vision object count:1.
+object1 position:(10,67) type:1.
+IN pid:2216 mid:1 bomber see.
+OUT pid:2216 mid:1 bomber vision object count:1.
+object1 position:(19,64) type:1.
+IN pid:2208 mid:1 bomber see.
+OUT pid:2208 mid:1 bomber vision object count:1.
+object1 position:(35,67) type:1.
+IN pid:2213 mid:2 bomber move target:(6, 48).
+OUT pid:2213 mid:0 bomber new location:(6, 48).
+IN pid:2215 mid:2 bomber move target:(73, 11).
+OUT pid:2215 mid:0 bomber new location:(73, 11).
+IN pid:2212 mid:2 bomber move target:(95, 67).
+OUT pid:2212 mid:0 bomber new location:(95, 67).
+IN pid:2210 mid:2 bomber move target:(30, 26).
+OUT pid:2210 mid:0 bomber new location:(30, 26).
+IN pid:2217 mid:2 bomber move target:(50, 63).
+OUT pid:2217 mid:0 bomber new location:(50, 63).
+IN pid:2209 mid:2 bomber move target:(88, 46).
+OUT pid:2209 mid:0 bomber new location:(88, 46).
+IN pid:2211 mid:2 bomber move target:(75, 0).
+OUT pid:2211 mid:0 bomber new location:(75, 0).
+IN pid:2214 mid:2 bomber move target:(10, 66).
+OUT pid:2214 mid:0 bomber new location:(10, 66).
+IN pid:2216 mid:2 bomber move target:(19, 63).
+OUT pid:2216 mid:0 bomber new location:(19, 63).
+IN pid:2208 mid:2 bomber move target:(35, 66).
+OUT pid:2208 mid:0 bomber new location:(35, 66).
+IN pid:2213 mid:2 bomber move target:(6, 47).
+OUT pid:2213 mid:0 bomber new location:(6, 47).
+IN pid:2215 mid:2 bomber move target:(73, 10).
+OUT pid:2215 mid:0 bomber new location:(73, 10).
+IN pid:2212 mid:2 bomber move target:(95, 66).
+OUT pid:2212 mid:0 bomber new location:(95, 66).
+IN pid:2210 mid:2 bomber move target:(30, 25).
+OUT pid:2210 mid:0 bomber new location:(30, 25).
+IN pid:2217 mid:2 bomber move target:(50, 62).
+OUT pid:2217 mid:0 bomber new location:(50, 62).
+IN pid:2209 mid:2 bomber move target:(88, 45).
+OUT pid:2209 mid:0 bomber new location:(88, 45).
+IN pid:2211 mid:2 bomber move target:(74, 0).
+OUT pid:2211 mid:0 bomber new location:(74, 0).
+IN pid:2214 mid:2 bomber move target:(10, 65).
+OUT pid:2214 mid:0 bomber new location:(10, 65).
+IN pid:2216 mid:2 bomber move target:(19, 62).
+OUT pid:2216 mid:0 bomber new location:(19, 62).
+IN pid:2208 mid:2 bomber move target:(35, 65).
+OUT pid:2208 mid:0 bomber new location:(35, 65).
+IN pid:2213 mid:2 bomber move target:(6, 46).
+OUT pid:2213 mid:0 bomber new location:(6, 46).
+IN pid:2215 mid:2 bomber move target:(73, 9).
+OUT pid:2215 mid:0 bomber new location:(73, 9).
+IN pid:2212 mid:2 bomber move target:(95, 65).
+OUT pid:2212 mid:0 bomber new location:(95, 65).
+IN pid:2210 mid:2 bomber move target:(30, 24).
+OUT pid:2210 mid:0 bomber new location:(30, 24).
+IN pid:2217 mid:2 bomber move target:(50, 61).
+OUT pid:2217 mid:0 bomber new location:(50, 61).
+IN pid:2209 mid:2 bomber move target:(88, 44).
+OUT pid:2209 mid:0 bomber new location:(88, 44).
+IN pid:2211 mid:2 bomber move target:(73, 0).
+OUT pid:2211 mid:0 bomber new location:(73, 0).
+IN pid:2214 mid:2 bomber move target:(10, 64).
+OUT pid:2214 mid:0 bomber new location:(10, 64).
+IN pid:2216 mid:2 bomber move target:(19, 61).
+OUT pid:2216 mid:0 bomber new location:(19, 61).
+IN pid:2208 mid:2 bomber move target:(35, 64).
+OUT pid:2208 mid:0 bomber new location:(35, 64).
+IN pid:2221 mid:4 bomb explode.
+IN pid:2222 mid:4 bomb explode.
+IN pid:2223 mid:4 bomb explode.
+IN pid:2224 mid:4 bomb explode.
+IN pid:2225 mid:4 bomb explode.
+IN pid:2226 mid:4 bomb explode.
+IN pid:2227 mid:4 bomb explode.
+IN pid:2228 mid:4 bomb explode.
+IN pid:2229 mid:4 bomb explode.
+IN pid:2230 mid:4 bomb explode.
+IN pid:2213 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2213 mid:3 bomber died.
+IN pid:2215 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2215 mid:3 bomber died.
+IN pid:2217 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2217 mid:3 bomber died.
+IN pid:2209 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2209 mid:3 bomber died.
+IN pid:2210 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2210 mid:3 bomber died.
+IN pid:2211 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2211 mid:3 bomber died.
+IN pid:2212 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2212 mid:3 bomber died.
+IN pid:2214 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2214 mid:3 bomber died.
+IN pid:2216 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2216 mid:3 bomber died.
+IN pid:2208 mid:3 bomber plant bomb interval:2500 radius:3.
+OUT pid:2208 mid:4 bomber wins.
