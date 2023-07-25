@@ -2,6 +2,7 @@
 #define HW1_LOGGING_H
 
 #include "message.h"
+#include <sys/time.h>
 #include <stdio.h>
 
 typedef struct incoming_message_print {
@@ -20,4 +21,8 @@ typedef struct obstacle_data {
 } obsd;
 
 void print_output(imp *in, omp *out, obsd *obstacle, od* objects);
+void print_output_helper(FILE* file, imp *in, omp *out, obsd *obstacle, od* objects);
+
+
+
 #endif //HW1_LOGGING_H

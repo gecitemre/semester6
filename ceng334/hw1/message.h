@@ -1,5 +1,5 @@
-#ifndef HW1_MESSAGE_H
-#define HW1_MESSAGE_H
+#ifndef HW1_CODE_MESSAGE_H
+#define HW1_CODE_MESSAGE_H
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -75,4 +75,4 @@ int send_object_data(int socket, int count, od* objects);
 // Do not forget to check if there is data to be read on this socket beforehand.
 int read_data(int socket, im* message);
 
-#endif //HW1_MESSAGE_H
+#endif //HW1_CODE_MESSAGE_H

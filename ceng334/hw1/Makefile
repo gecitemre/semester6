@@ -30,5 +30,9 @@ test4: tar
 tests:
 	make test1 test2 test3 test4
 
+grade:
+	tar -xf grader.tar.gz
+	./grader
+
 clear:
 	rm -f $(TARFILE) bgame message.h.gch logging.h.gch
